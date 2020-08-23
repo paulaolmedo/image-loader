@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: Satellite Image Loader
+  description: Service to interact with satellite images on a database
+  version: "1.0"
+servers:
+- url: http://localhost:8000
+paths:
+  /images:
+    post:
+      tags:
+      - Images
+      summary: Load new satellite image Images
+      description: loads a new image into the database
+      operationId: Images#Load new satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNewSatelliteImageRequestBody'
+            example:
+              date_time: "1994-09-19T16:01:12Z"
+              geographic_information:
+                coordinates:
+                  Sit facilis qui et voluptas.: 0.45731705303115716
+                tag_name: Nemo occaecati aperiam quis autem.
+              id: Harum architecto quo molestias qui.
+              normalized_indexes:
+                ndvi:
+                - 0.18711642837954914
+                - 0.09177180070813358
+                - 0.7808423638626252
+                ndwi:
+                - 0.7146847364477503
+                - 0.540422727294012
+                - 0.5322622263700029
+                - 0.299780450041929
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              example: {}
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        fault:
+          type: boolean
+          description: Is the error a server-side fault?
+          example: false
+        id:
+          type: string
+          description: ID is a unique identifier for this particular occurrence of the problem.
+          example: 123abc
+        message:
+          type: string
+          description: Message is a human-readable explanation specific to this occurrence of the problem.
+          example: parameter 'p' must be an integer
+        name:
+          type: string
+          description: Name is the name of this class of errors.
+          example: bad_request
+        temporary:
+          type: boolean
+          description: Is the error temporary?
+          example: false
+        timeout:
+          type: boolean
+          description: Is the error a timeout?
+          example: true
+      example:
+        fault: true
+        id: 123abc
+        message: parameter 'p' must be an integer
+        name: bad_request
+        temporary: false
+        timeout: true
+      required:
+      - name
+      - id
+      - message
+      - temporary
+      - timeout
+      - fault
+    GeographicInformation:
+      type: object
+      properties:
+        coordinates:
+          type: object
+          description: Coordinates of the satellite image
+          example:
+            Accusamus maiores.: 0.7609016163545076
+            Aliquid autem iure et.: 0.9257392144947013
+          additionalProperties: true
+        tag_name:
+          type: string
+          description: Non-forgetable identifier
+          example: Sit eum rerum dolores ullam aliquid.
+      example:
+        coordinates:
+          Ut non voluptates quia quis pariatur.: 0.8481271776795617
+        tag_name: Velit et dolores.
+    LoadNewSatelliteImageRequestBody:
+      type: object
+      properties:
+        date_time:
+          type: string
+          description: When was the image taken
+          example: "1997-10-13T11:16:22Z"
+          format: date-time
+        geographic_information:
+          $ref: '#/components/schemas/GeographicInformation'
+        id:
+          type: string
+          description: The image identifier
+          example: Maxime rerum fugiat atque.
+        normalized_indexes:
+          $ref: '#/components/schemas/NormalizedIndexes'
+      example:
+        date_time: "1982-05-20T05:40:47Z"
+        geographic_information:
+          coordinates:
+            Sit facilis qui et voluptas.: 0.45731705303115716
+          tag_name: Nemo occaecati aperiam quis autem.
+        id: Officia hic.
+        normalized_indexes:
+          ndvi:
+          - 0.18711642837954914
+          - 0.09177180070813358
+          - 0.7808423638626252
+          ndwi:
+          - 0.7146847364477503
+          - 0.540422727294012
+          - 0.5322622263700029
+          - 0.299780450041929
+    NormalizedIndexes:
+      type: object
+      properties:
+        ndvi:
+          type: array
+          items:
+            type: number
+            example: 0.7567731912282232
+            format: double
+          description: Normalized difference vegetation index
+          example:
+          - 0.06838056104513822
+          - 0.11734541456440235
+        ndwi:
+          type: array
+          items:
+            type: number
+            example: 0.10973095008020324
+            format: double
+          description: Normalized difference water index
+          example:
+          - 0.1553588273184696
+          - 0.7347608461397988
+      example:
+        ndvi:
+        - 0.23884558899258065
+        - 0.9199595062652263
+        - 0.5827098159219002
+        ndwi:
+        - 0.6777854591929429
+        - 0.03476154544671488
+        - 0.9574079529023375
+        - 0.4037711288410709

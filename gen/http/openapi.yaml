@@ -3,7 +3,8 @@ info:
   title: Satellite Image Loader
   description: Service to interact with satellite images on a database
   version: "1.0"
-host: localhost:8000
+host: localhost:80
+basePath: /image-loader/api/v1
 consumes:
 - application/json
 - application/xml

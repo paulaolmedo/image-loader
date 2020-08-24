@@ -55,7 +55,7 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"LoadNewSatelliteImage", "POST", "/images"},
+			{"LoadNewSatelliteImage", "POST", "/image-loader/api/v1/images"},
 		},
 		LoadNewSatelliteImage: NewLoadNewSatelliteImageHandler(e.LoadNewSatelliteImage, mux, decoder, encoder, errhandler, formatter),
 	}
@@ -83,7 +83,7 @@ func MountLoadNewSatelliteImageHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/images", f)
+	mux.Handle("POST", "/image-loader/api/v1/images", f)
 }
 
 // NewLoadNewSatelliteImageHandler creates a HTTP handler which loads the HTTP

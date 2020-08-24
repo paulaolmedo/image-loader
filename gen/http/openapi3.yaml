@@ -4,9 +4,10 @@ info:
   description: Service to interact with satellite images on a database
   version: "1.0"
 servers:
-- url: http://localhost:8000
+- url: http://localhost:80
+  description: Default server for Satellite Image Loader API
 paths:
-  /images:
+  /image-loader/api/v1/images:
     post:
       tags:
       - Images

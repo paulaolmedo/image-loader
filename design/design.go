@@ -8,10 +8,8 @@ var _ = API("Satellite Image Loader API", func() {
 	Title("Satellite Image Loader")
 	Description("Service to interact with satellite images on a database")
 	Version("1.0")
-	Server("image-loader", func() {
-		Host("localhost", func() {
-			URI("http://localhost:8000")
-		})
+	HTTP(func() {
+		Path("/image-loader/api/v1")
 	})
 })
 

@@ -9,5 +9,5 @@ package server
 
 // LoadNewSatelliteImageImagesPath returns the URL path to the Images service Load new satellite image HTTP endpoint.
 func LoadNewSatelliteImageImagesPath() string {
-	return "/images"
+	return "/image-loader/api/v1/images"
 }

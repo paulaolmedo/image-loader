@@ -9,6 +9,7 @@ package images
 
 import (
 	"context"
+	imagesviews "image-loader/gen/images/views"
 
 	goa "goa.design/goa/v3/pkg"
 )
@@ -16,7 +17,11 @@ import (
 // Service is the Images service interface.
 type Service interface {
 	// loads a new image into the database
-	LoadNewSatelliteImage(context.Context, *SatelliteImage) (err error)
+	LoadNewSatelliteImage(context.Context, *RawSatelliteImage) (res *GoaResult, err error)
+	// get a raw image from the database
+	GetRawSatelliteImage(context.Context, *GetRawSatelliteImagePayload) (res *GoaResult, err error)
+	// loads a new image into the database
+	LoadNewProcessedSatelliteImage(context.Context, *ProcessedSatelliteImage) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -27,13 +32,40 @@ const ServiceName = "Images"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"Load new satellite image"}
+var MethodNames = [3]string{"Load new satellite image", "Get raw satellite image", "Load new processed satellite image"}
 
-// SatelliteImage is the payload type of the Images service Load new satellite
-// image method.
-type SatelliteImage struct {
+// RawSatelliteImage is the payload type of the Images service Load new
+// satellite image method.
+type RawSatelliteImage struct {
 	// The image identifier
-	ID                    *string `bson:"_id"`
+	ID *string `bson:"_id"`
+	// File name of the raw image
+	FileName *string
+}
+
+// GoaResult is the result type of the Images service Load new satellite image
+// method.
+type GoaResult struct {
+	// The operation code
+	Code *string
+	// The operation description
+	Description *string
+}
+
+// GetRawSatelliteImagePayload is the payload type of the Images service Get
+// raw satellite image method.
+type GetRawSatelliteImagePayload struct {
+	// File name of the raw image
+	FileName *string
+}
+
+// ProcessedSatelliteImage is the payload type of the Images service Load new
+// processed satellite image method.
+type ProcessedSatelliteImage struct {
+	// The image identifier
+	ID *string `bson:"_id"`
+	// File name of the processed image
+	FileName              *string
 	GeographicInformation *GeographicInformation
 	// When was the image taken
 	DateTime          *string
@@ -88,4 +120,45 @@ func MakeErrorAddingImage(err error) *goa.ServiceError {
 		ID:      goa.NewErrorID(),
 		Message: err.Error(),
 	}
+}
+
+// MakeErrorGettingImage builds a goa.ServiceError from an error.
+func MakeErrorGettingImage(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "ErrorGettingImage",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
+// NewGoaResult initializes result type GoaResult from viewed result type
+// GoaResult.
+func NewGoaResult(vres *imagesviews.GoaResult) *GoaResult {
+	return newGoaResult(vres.Projected)
+}
+
+// NewViewedGoaResult initializes viewed result type GoaResult from result type
+// GoaResult using the given view.
+func NewViewedGoaResult(res *GoaResult, view string) *imagesviews.GoaResult {
+	p := newGoaResultView(res)
+	return &imagesviews.GoaResult{Projected: p, View: "default"}
+}
+
+// newGoaResult converts projected type GoaResult to service type GoaResult.
+func newGoaResult(vres *imagesviews.GoaResultView) *GoaResult {
+	res := &GoaResult{
+		Code:        vres.Code,
+		Description: vres.Description,
+	}
+	return res
+}
+
+// newGoaResultView projects result type GoaResult to projected type
+// GoaResultView using the "default" view.
+func newGoaResultView(res *GoaResult) *imagesviews.GoaResultView {
+	vres := &imagesviews.GoaResultView{
+		Code:        res.Code,
+		Description: res.Description,
+	}
+	return vres
 }

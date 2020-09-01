@@ -15,26 +15,60 @@ import (
 
 // Endpoints wraps the "Images" service endpoints.
 type Endpoints struct {
-	LoadNewSatelliteImage goa.Endpoint
+	LoadNewSatelliteImage          goa.Endpoint
+	GetRawSatelliteImage           goa.Endpoint
+	LoadNewProcessedSatelliteImage goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "Images" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		LoadNewSatelliteImage: NewLoadNewSatelliteImageEndpoint(s),
+		LoadNewSatelliteImage:          NewLoadNewSatelliteImageEndpoint(s),
+		GetRawSatelliteImage:           NewGetRawSatelliteImageEndpoint(s),
+		LoadNewProcessedSatelliteImage: NewLoadNewProcessedSatelliteImageEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "Images" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.LoadNewSatelliteImage = m(e.LoadNewSatelliteImage)
+	e.GetRawSatelliteImage = m(e.GetRawSatelliteImage)
+	e.LoadNewProcessedSatelliteImage = m(e.LoadNewProcessedSatelliteImage)
 }
 
 // NewLoadNewSatelliteImageEndpoint returns an endpoint function that calls the
 // method "Load new satellite image" of service "Images".
 func NewLoadNewSatelliteImageEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*SatelliteImage)
-		return nil, s.LoadNewSatelliteImage(ctx, p)
+		p := req.(*RawSatelliteImage)
+		res, err := s.LoadNewSatelliteImage(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedGoaResult(res, "default")
+		return vres, nil
+	}
+}
+
+// NewGetRawSatelliteImageEndpoint returns an endpoint function that calls the
+// method "Get raw satellite image" of service "Images".
+func NewGetRawSatelliteImageEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetRawSatelliteImagePayload)
+		res, err := s.GetRawSatelliteImage(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedGoaResult(res, "default")
+		return vres, nil
+	}
+}
+
+// NewLoadNewProcessedSatelliteImageEndpoint returns an endpoint function that
+// calls the method "Load new processed satellite image" of service "Images".
+func NewLoadNewProcessedSatelliteImageEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ProcessedSatelliteImage)
+		return nil, s.LoadNewProcessedSatelliteImage(ctx, p)
 	}
 }

@@ -10,6 +10,7 @@ package server
 import (
 	"context"
 	images "image-loader/gen/images"
+	imagesviews "image-loader/gen/images/views"
 	"io"
 	"net/http"
 
@@ -21,8 +22,11 @@ import (
 // returned by the Images Load new satellite image endpoint.
 func EncodeLoadNewSatelliteImageResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*imagesviews.GoaResult)
+		enc := encoder(ctx, w)
+		body := NewLoadNewSatelliteImageResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
-		return nil
+		return enc.Encode(body)
 	}
 }
 
@@ -41,11 +45,7 @@ func DecodeLoadNewSatelliteImageRequest(mux goahttp.Muxer, decoder func(*http.Re
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
-		err = ValidateLoadNewSatelliteImageRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
-		payload := NewLoadNewSatelliteImageSatelliteImage(&body)
+		payload := NewLoadNewSatelliteImageRawSatelliteImage(&body)
 
 		return payload, nil
 	}
@@ -81,6 +81,153 @@ func EncodeLoadNewSatelliteImageError(encoder func(context.Context, http.Respons
 				body = formatter(res)
 			} else {
 				body = NewLoadNewSatelliteImageInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "InternalError")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
+// EncodeGetRawSatelliteImageResponse returns an encoder for responses returned
+// by the Images Get raw satellite image endpoint.
+func EncodeGetRawSatelliteImageResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*imagesviews.GoaResult)
+		enc := encoder(ctx, w)
+		body := NewGetRawSatelliteImageResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetRawSatelliteImageRequest returns a decoder for requests sent to the
+// Images Get raw satellite image endpoint.
+func DecodeGetRawSatelliteImageRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body GetRawSatelliteImageRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		payload := NewGetRawSatelliteImagePayload(&body)
+
+		return payload, nil
+	}
+}
+
+// EncodeGetRawSatelliteImageError returns an encoder for errors returned by
+// the Get raw satellite image Images endpoint.
+func EncodeGetRawSatelliteImageError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "BadRequest":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewGetRawSatelliteImageBadRequestResponseBody(res)
+			}
+			w.Header().Set("goa-error", "BadRequest")
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		case "InternalError":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewGetRawSatelliteImageInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "InternalError")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
+// EncodeLoadNewProcessedSatelliteImageResponse returns an encoder for
+// responses returned by the Images Load new processed satellite image endpoint.
+func EncodeLoadNewProcessedSatelliteImageResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeLoadNewProcessedSatelliteImageRequest returns a decoder for requests
+// sent to the Images Load new processed satellite image endpoint.
+func DecodeLoadNewProcessedSatelliteImageRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body LoadNewProcessedSatelliteImageRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateLoadNewProcessedSatelliteImageRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+		payload := NewLoadNewProcessedSatelliteImageProcessedSatelliteImage(&body)
+
+		return payload, nil
+	}
+}
+
+// EncodeLoadNewProcessedSatelliteImageError returns an encoder for errors
+// returned by the Load new processed satellite image Images endpoint.
+func EncodeLoadNewProcessedSatelliteImageError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "BadRequest":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewLoadNewProcessedSatelliteImageBadRequestResponseBody(res)
+			}
+			w.Header().Set("goa-error", "BadRequest")
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		case "InternalError":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewLoadNewProcessedSatelliteImageInternalErrorResponseBody(res)
 			}
 			w.Header().Set("goa-error", "InternalError")
 			w.WriteHeader(http.StatusInternalServerError)

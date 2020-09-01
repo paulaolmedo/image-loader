@@ -15,11 +15,20 @@ var _ = API("Satellite Image Loader API", func() {
 
 /********** Data type definition **********/
 
-// SatelliteImage Information
-var SatelliteImage = Type("SatelliteImage", func() {
+// RawSatelliteImage Information (raw)
+var RawSatelliteImage = Type("RawSatelliteImage", func() {
 	Attribute("id", String, "The image identifier", func() {
 		Meta("struct:tag:bson", "_id")
 	})
+	Attribute("file_name", String, "File name of the raw image")
+})
+
+//ProcessedSatelliteImage Information (not raw, clearly)
+var ProcessedSatelliteImage = Type("ProcessedSatelliteImage", func() {
+	Attribute("id", String, "The image identifier", func() {
+		Meta("struct:tag:bson", "_id")
+	})
+	Attribute("file_name", String, "File name of the processed image")
 	Attribute("geographic_information", GeographicInformation)
 	Attribute("date_time", String, "When was the image taken", func() {
 		Format(FormatDateTime)
@@ -40,7 +49,20 @@ var NormalizedIndexes = Type("NormalizedIndexes", func() {
 	//@wip: here can be added: enhanced vegetation index, burning area index...
 })
 
-/********** Data type definition **********/
+// OperationResult of an operation
+var OperationResult = ResultType("vnd.application/goa.Result+json", func() {
+	Description("The results of an operation")
+	Attributes(func() {
+		Attribute("code", String, "The operation code")
+		Attribute("description", String, "The operation description")
+	})
+	View("default", func() {
+		Attribute("code")
+		Attribute("description")
+	})
+})
+
+/********** Services definition **********/
 var _ = Service("Images", func() {
 	HTTP(func() {
 		Path("/images")
@@ -50,13 +72,39 @@ var _ = Service("Images", func() {
 	Error("NotFound")
 	Method("Load new satellite image", func() {
 		Description("loads a new image into the database")
-		Payload(SatelliteImage)
+		Payload(RawSatelliteImage)
+		Result(OperationResult)
+		Error("ErrorAddingImage")
+		HTTP(func() {
+			POST("/")
+			Response(StatusOK)
+			Response("BadRequest", StatusBadRequest)
+			Response("InternalError", StatusInternalServerError)
+		})
+	})
+	Method("Get raw satellite image", func() {
+		Description("get a raw image from the database")
+		Payload(func() {
+			Attribute("file_name", String, "File name of the raw image")
+		})
+		Result(OperationResult)
+		Error("ErrorGettingImage")
+		HTTP(func() {
+			GET("/")
+			Response(StatusOK)
+			Response("BadRequest", StatusBadRequest)
+			Response("InternalError", StatusInternalServerError)
+		})
+	})
+	Method("Load new processed satellite image", func() {
+		Description("loads a new image into the database")
+		Payload(ProcessedSatelliteImage)
 		Result(func() {
 			Description("Image added")
 		})
 		Error("ErrorAddingImage")
 		HTTP(func() {
-			POST("/")
+			POST("/processed")
 			Response(StatusOK)
 			Response("BadRequest", StatusBadRequest)
 			Response("InternalError", StatusInternalServerError)

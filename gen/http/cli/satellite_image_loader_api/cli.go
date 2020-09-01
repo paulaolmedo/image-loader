@@ -23,34 +23,15 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `images load- new- satellite- image
+	return `images (load- new- satellite- image|get- raw- satellite- image|load- new- processed- satellite- image)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` images load- new- satellite- image --body '{
-      "date_time": "1994-09-19T16:01:12Z",
-      "geographic_information": {
-         "coordinates": {
-            "Sit facilis qui et voluptas.": 0.45731705303115716
-         },
-         "tag_name": "Nemo occaecati aperiam quis autem."
-      },
-      "id": "Harum architecto quo molestias qui.",
-      "normalized_indexes": {
-         "ndvi": [
-            0.18711642837954914,
-            0.09177180070813358,
-            0.7808423638626252
-         ],
-         "ndwi": [
-            0.7146847364477503,
-            0.540422727294012,
-            0.5322622263700029,
-            0.299780450041929
-         ]
-      }
+      "file_name": "Voluptates architecto.",
+      "id": "Consequuntur non placeat ab."
    }'` + "\n" +
 		""
 }
@@ -69,9 +50,17 @@ func ParseEndpoint(
 
 		imagesLoadNewSatelliteImageFlags    = flag.NewFlagSet("load- new- satellite- image", flag.ExitOnError)
 		imagesLoadNewSatelliteImageBodyFlag = imagesLoadNewSatelliteImageFlags.String("body", "REQUIRED", "")
+
+		imagesGetRawSatelliteImageFlags    = flag.NewFlagSet("get- raw- satellite- image", flag.ExitOnError)
+		imagesGetRawSatelliteImageBodyFlag = imagesGetRawSatelliteImageFlags.String("body", "REQUIRED", "")
+
+		imagesLoadNewProcessedSatelliteImageFlags    = flag.NewFlagSet("load- new- processed- satellite- image", flag.ExitOnError)
+		imagesLoadNewProcessedSatelliteImageBodyFlag = imagesLoadNewProcessedSatelliteImageFlags.String("body", "REQUIRED", "")
 	)
 	imagesFlags.Usage = imagesUsage
 	imagesLoadNewSatelliteImageFlags.Usage = imagesLoadNewSatelliteImageUsage
+	imagesGetRawSatelliteImageFlags.Usage = imagesGetRawSatelliteImageUsage
+	imagesLoadNewProcessedSatelliteImageFlags.Usage = imagesLoadNewProcessedSatelliteImageUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -110,6 +99,12 @@ func ParseEndpoint(
 			case "load- new- satellite- image":
 				epf = imagesLoadNewSatelliteImageFlags
 
+			case "get- raw- satellite- image":
+				epf = imagesGetRawSatelliteImageFlags
+
+			case "load- new- processed- satellite- image":
+				epf = imagesLoadNewProcessedSatelliteImageFlags
+
 			}
 
 		}
@@ -138,6 +133,12 @@ func ParseEndpoint(
 			case "load- new- satellite- image":
 				endpoint = c.LoadNewSatelliteImage()
 				data, err = imagesc.BuildLoadNewSatelliteImagePayload(*imagesLoadNewSatelliteImageBodyFlag)
+			case "get- raw- satellite- image":
+				endpoint = c.GetRawSatelliteImage()
+				data, err = imagesc.BuildGetRawSatelliteImagePayload(*imagesGetRawSatelliteImageBodyFlag)
+			case "load- new- processed- satellite- image":
+				endpoint = c.LoadNewProcessedSatelliteImage()
+				data, err = imagesc.BuildLoadNewProcessedSatelliteImagePayload(*imagesLoadNewProcessedSatelliteImageBodyFlag)
 			}
 		}
 	}
@@ -156,6 +157,8 @@ Usage:
 
 COMMAND:
     load- new- satellite- image: loads a new image into the database
+    get- raw- satellite- image: get a raw image from the database
+    load- new- processed- satellite- image: loads a new image into the database
 
 Additional help:
     %s images COMMAND --help
@@ -169,25 +172,54 @@ loads a new image into the database
 
 Example:
     `+os.Args[0]+` images load- new- satellite- image --body '{
-      "date_time": "1994-09-19T16:01:12Z",
+      "file_name": "Voluptates architecto.",
+      "id": "Consequuntur non placeat ab."
+   }'
+`, os.Args[0])
+}
+
+func imagesGetRawSatelliteImageUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] images get- raw- satellite- image -body JSON
+
+get a raw image from the database
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` images get- raw- satellite- image --body '{
+      "file_name": "Quia quos eos ut unde sed dolorum."
+   }'
+`, os.Args[0])
+}
+
+func imagesLoadNewProcessedSatelliteImageUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] images load- new- processed- satellite- image -body JSON
+
+loads a new image into the database
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` images load- new- processed- satellite- image --body '{
+      "date_time": "2008-09-18T10:35:05Z",
+      "file_name": "Reprehenderit tempore nesciunt aut.",
       "geographic_information": {
          "coordinates": {
-            "Sit facilis qui et voluptas.": 0.45731705303115716
+            "Ex exercitationem aut reiciendis quod voluptate incidunt.": 0.7392343776263494,
+            "Molestiae sed molestias praesentium rerum.": 0.3908551358201754,
+            "Qui qui iusto praesentium.": 0.19181675265671314
          },
-         "tag_name": "Nemo occaecati aperiam quis autem."
+         "tag_name": "Incidunt odit tempore."
       },
-      "id": "Harum architecto quo molestias qui.",
+      "id": "Sunt occaecati ut qui libero similique dolores.",
       "normalized_indexes": {
          "ndvi": [
-            0.18711642837954914,
-            0.09177180070813358,
-            0.7808423638626252
+            0.6127802172492277,
+            0.004560762359582058,
+            0.480367361557016
          ],
          "ndwi": [
-            0.7146847364477503,
-            0.540422727294012,
-            0.5322622263700029,
-            0.299780450041929
+            0.08253636129242008,
+            0.030755381445945546,
+            0.659276994468877
          ]
       }
    }'

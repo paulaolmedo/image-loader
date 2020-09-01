@@ -21,6 +21,14 @@ type Client struct {
 	// Load new satellite image endpoint.
 	LoadNewSatelliteImageDoer goahttp.Doer
 
+	// GetRawSatelliteImage Doer is the HTTP client used to make requests to the
+	// Get raw satellite image endpoint.
+	GetRawSatelliteImageDoer goahttp.Doer
+
+	// LoadNewProcessedSatelliteImage Doer is the HTTP client used to make requests
+	// to the Load new processed satellite image endpoint.
+	LoadNewProcessedSatelliteImageDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -41,12 +49,14 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		LoadNewSatelliteImageDoer: doer,
-		RestoreResponseBody:       restoreBody,
-		scheme:                    scheme,
-		host:                      host,
-		decoder:                   dec,
-		encoder:                   enc,
+		LoadNewSatelliteImageDoer:          doer,
+		GetRawSatelliteImageDoer:           doer,
+		LoadNewProcessedSatelliteImageDoer: doer,
+		RestoreResponseBody:                restoreBody,
+		scheme:                             scheme,
+		host:                               host,
+		decoder:                            dec,
+		encoder:                            enc,
 	}
 }
 
@@ -69,6 +79,54 @@ func (c *Client) LoadNewSatelliteImage() goa.Endpoint {
 		resp, err := c.LoadNewSatelliteImageDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("Images", "Load new satellite image", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// GetRawSatelliteImage returns an endpoint that makes HTTP requests to the
+// Images service Get raw satellite image server.
+func (c *Client) GetRawSatelliteImage() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeGetRawSatelliteImageRequest(c.encoder)
+		decodeResponse = DecodeGetRawSatelliteImageResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildGetRawSatelliteImageRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.GetRawSatelliteImageDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("Images", "Get raw satellite image", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// LoadNewProcessedSatelliteImage returns an endpoint that makes HTTP requests
+// to the Images service Load new processed satellite image server.
+func (c *Client) LoadNewProcessedSatelliteImage() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeLoadNewProcessedSatelliteImageRequest(c.encoder)
+		decodeResponse = DecodeLoadNewProcessedSatelliteImageResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildLoadNewProcessedSatelliteImageRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.LoadNewProcessedSatelliteImageDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("Images", "Load new processed satellite image", err)
 		}
 		return decodeResponse(resp)
 	}

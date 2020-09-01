@@ -15,13 +15,17 @@ import (
 
 // Client is the "Images" service client.
 type Client struct {
-	LoadNewSatelliteImageEndpoint goa.Endpoint
+	LoadNewSatelliteImageEndpoint          goa.Endpoint
+	GetRawSatelliteImageEndpoint           goa.Endpoint
+	LoadNewProcessedSatelliteImageEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "Images" service client given the endpoints.
-func NewClient(loadNewSatelliteImage goa.Endpoint) *Client {
+func NewClient(loadNewSatelliteImage, getRawSatelliteImage, loadNewProcessedSatelliteImage goa.Endpoint) *Client {
 	return &Client{
-		LoadNewSatelliteImageEndpoint: loadNewSatelliteImage,
+		LoadNewSatelliteImageEndpoint:          loadNewSatelliteImage,
+		GetRawSatelliteImageEndpoint:           getRawSatelliteImage,
+		LoadNewProcessedSatelliteImageEndpoint: loadNewProcessedSatelliteImage,
 	}
 }
 
@@ -30,7 +34,35 @@ func NewClient(loadNewSatelliteImage goa.Endpoint) *Client {
 // LoadNewSatelliteImage may return the following errors:
 //	- "ErrorAddingImage" (type *goa.ServiceError)
 //	- error: internal error
-func (c *Client) LoadNewSatelliteImage(ctx context.Context, p *SatelliteImage) (err error) {
-	_, err = c.LoadNewSatelliteImageEndpoint(ctx, p)
+func (c *Client) LoadNewSatelliteImage(ctx context.Context, p *RawSatelliteImage) (res *GoaResult, err error) {
+	var ires interface{}
+	ires, err = c.LoadNewSatelliteImageEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*GoaResult), nil
+}
+
+// GetRawSatelliteImage calls the "Get raw satellite image" endpoint of the
+// "Images" service.
+// GetRawSatelliteImage may return the following errors:
+//	- "ErrorGettingImage" (type *goa.ServiceError)
+//	- error: internal error
+func (c *Client) GetRawSatelliteImage(ctx context.Context, p *GetRawSatelliteImagePayload) (res *GoaResult, err error) {
+	var ires interface{}
+	ires, err = c.GetRawSatelliteImageEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*GoaResult), nil
+}
+
+// LoadNewProcessedSatelliteImage calls the "Load new processed satellite
+// image" endpoint of the "Images" service.
+// LoadNewProcessedSatelliteImage may return the following errors:
+//	- "ErrorAddingImage" (type *goa.ServiceError)
+//	- error: internal error
+func (c *Client) LoadNewProcessedSatelliteImage(ctx context.Context, p *ProcessedSatelliteImage) (err error) {
+	_, err = c.LoadNewProcessedSatelliteImageEndpoint(ctx, p)
 	return
 }

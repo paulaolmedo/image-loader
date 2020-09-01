@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"context"
 	images "image-loader/gen/images"
+	imagesviews "image-loader/gen/images/views"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -38,9 +39,9 @@ func (c *Client) BuildLoadNewSatelliteImageRequest(ctx context.Context, v interf
 // the Images Load new satellite image server.
 func EncodeLoadNewSatelliteImageRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*images.SatelliteImage)
+		p, ok := v.(*images.RawSatelliteImage)
 		if !ok {
-			return goahttp.ErrInvalidType("Images", "Load new satellite image", "*images.SatelliteImage", v)
+			return goahttp.ErrInvalidType("Images", "Load new satellite image", "*images.RawSatelliteImage", v)
 		}
 		body := NewLoadNewSatelliteImageRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
@@ -73,7 +74,22 @@ func DecodeLoadNewSatelliteImageResponse(decoder func(*http.Response) goahttp.De
 		}
 		switch resp.StatusCode {
 		case http.StatusOK:
-			return nil, nil
+			var (
+				body LoadNewSatelliteImageResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Load new satellite image", err)
+			}
+			p := NewLoadNewSatelliteImageGoaResultOK(&body)
+			view := "default"
+			vres := &imagesviews.GoaResult{Projected: p, View: view}
+			if err = imagesviews.ValidateGoaResult(vres); err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Load new satellite image", err)
+			}
+			res := images.NewGoaResult(vres)
+			return res, nil
 		case http.StatusBadRequest:
 			var (
 				body LoadNewSatelliteImageBadRequestResponseBody
@@ -105,6 +121,204 @@ func DecodeLoadNewSatelliteImageResponse(decoder func(*http.Response) goahttp.De
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("Images", "Load new satellite image", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildGetRawSatelliteImageRequest instantiates a HTTP request object with
+// method and path set to call the "Images" service "Get raw satellite image"
+// endpoint
+func (c *Client) BuildGetRawSatelliteImageRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetRawSatelliteImageImagesPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("Images", "Get raw satellite image", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeGetRawSatelliteImageRequest returns an encoder for requests sent to
+// the Images Get raw satellite image server.
+func EncodeGetRawSatelliteImageRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*images.GetRawSatelliteImagePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("Images", "Get raw satellite image", "*images.GetRawSatelliteImagePayload", v)
+		}
+		body := NewGetRawSatelliteImageRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("Images", "Get raw satellite image", err)
+		}
+		return nil
+	}
+}
+
+// DecodeGetRawSatelliteImageResponse returns a decoder for responses returned
+// by the Images Get raw satellite image endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+// DecodeGetRawSatelliteImageResponse may return the following errors:
+//	- "BadRequest" (type *goa.ServiceError): http.StatusBadRequest
+//	- "InternalError" (type *goa.ServiceError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeGetRawSatelliteImageResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body GetRawSatelliteImageResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Get raw satellite image", err)
+			}
+			p := NewGetRawSatelliteImageGoaResultOK(&body)
+			view := "default"
+			vres := &imagesviews.GoaResult{Projected: p, View: view}
+			if err = imagesviews.ValidateGoaResult(vres); err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Get raw satellite image", err)
+			}
+			res := images.NewGoaResult(vres)
+			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body GetRawSatelliteImageBadRequestResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Get raw satellite image", err)
+			}
+			err = ValidateGetRawSatelliteImageBadRequestResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Get raw satellite image", err)
+			}
+			return nil, NewGetRawSatelliteImageBadRequest(&body)
+		case http.StatusInternalServerError:
+			var (
+				body GetRawSatelliteImageInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Get raw satellite image", err)
+			}
+			err = ValidateGetRawSatelliteImageInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Get raw satellite image", err)
+			}
+			return nil, NewGetRawSatelliteImageInternalError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("Images", "Get raw satellite image", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildLoadNewProcessedSatelliteImageRequest instantiates a HTTP request
+// object with method and path set to call the "Images" service "Load new
+// processed satellite image" endpoint
+func (c *Client) BuildLoadNewProcessedSatelliteImageRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: LoadNewProcessedSatelliteImageImagesPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("Images", "Load new processed satellite image", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeLoadNewProcessedSatelliteImageRequest returns an encoder for requests
+// sent to the Images Load new processed satellite image server.
+func EncodeLoadNewProcessedSatelliteImageRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*images.ProcessedSatelliteImage)
+		if !ok {
+			return goahttp.ErrInvalidType("Images", "Load new processed satellite image", "*images.ProcessedSatelliteImage", v)
+		}
+		body := NewLoadNewProcessedSatelliteImageRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("Images", "Load new processed satellite image", err)
+		}
+		return nil
+	}
+}
+
+// DecodeLoadNewProcessedSatelliteImageResponse returns a decoder for responses
+// returned by the Images Load new processed satellite image endpoint.
+// restoreBody controls whether the response body should be restored after
+// having been read.
+// DecodeLoadNewProcessedSatelliteImageResponse may return the following errors:
+//	- "BadRequest" (type *goa.ServiceError): http.StatusBadRequest
+//	- "InternalError" (type *goa.ServiceError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeLoadNewProcessedSatelliteImageResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		case http.StatusBadRequest:
+			var (
+				body LoadNewProcessedSatelliteImageBadRequestResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Load new processed satellite image", err)
+			}
+			err = ValidateLoadNewProcessedSatelliteImageBadRequestResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Load new processed satellite image", err)
+			}
+			return nil, NewLoadNewProcessedSatelliteImageBadRequest(&body)
+		case http.StatusInternalServerError:
+			var (
+				body LoadNewProcessedSatelliteImageInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("Images", "Load new processed satellite image", err)
+			}
+			err = ValidateLoadNewProcessedSatelliteImageInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("Images", "Load new processed satellite image", err)
+			}
+			return nil, NewLoadNewProcessedSatelliteImageInternalError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("Images", "Load new processed satellite image", resp.StatusCode, string(body))
 		}
 	}
 }

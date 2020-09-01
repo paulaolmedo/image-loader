@@ -9,6 +9,7 @@ package server
 
 import (
 	images "image-loader/gen/images"
+	imagesviews "image-loader/gen/images/views"
 
 	goa "goa.design/goa/v3/pkg"
 )
@@ -17,11 +18,47 @@ import (
 // new satellite image" endpoint HTTP request body.
 type LoadNewSatelliteImageRequestBody struct {
 	// The image identifier
-	ID                    *string                           `bson:"_id"`
+	ID *string `bson:"_id"`
+	// File name of the raw image
+	FileName *string `form:"file_name,omitempty" json:"file_name,omitempty" xml:"file_name,omitempty"`
+}
+
+// GetRawSatelliteImageRequestBody is the type of the "Images" service "Get raw
+// satellite image" endpoint HTTP request body.
+type GetRawSatelliteImageRequestBody struct {
+	// File name of the raw image
+	FileName *string `form:"file_name,omitempty" json:"file_name,omitempty" xml:"file_name,omitempty"`
+}
+
+// LoadNewProcessedSatelliteImageRequestBody is the type of the "Images"
+// service "Load new processed satellite image" endpoint HTTP request body.
+type LoadNewProcessedSatelliteImageRequestBody struct {
+	// The image identifier
+	ID *string `bson:"_id"`
+	// File name of the processed image
+	FileName              *string                           `form:"file_name,omitempty" json:"file_name,omitempty" xml:"file_name,omitempty"`
 	GeographicInformation *GeographicInformationRequestBody `form:"geographic_information,omitempty" json:"geographic_information,omitempty" xml:"geographic_information,omitempty"`
 	// When was the image taken
 	DateTime          *string                       `form:"date_time,omitempty" json:"date_time,omitempty" xml:"date_time,omitempty"`
 	NormalizedIndexes *NormalizedIndexesRequestBody `form:"normalized_indexes,omitempty" json:"normalized_indexes,omitempty" xml:"normalized_indexes,omitempty"`
+}
+
+// LoadNewSatelliteImageResponseBody is the type of the "Images" service "Load
+// new satellite image" endpoint HTTP response body.
+type LoadNewSatelliteImageResponseBody struct {
+	// The operation code
+	Code *string `form:"code,omitempty" json:"code,omitempty" xml:"code,omitempty"`
+	// The operation description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+}
+
+// GetRawSatelliteImageResponseBody is the type of the "Images" service "Get
+// raw satellite image" endpoint HTTP response body.
+type GetRawSatelliteImageResponseBody struct {
+	// The operation code
+	Code *string `form:"code,omitempty" json:"code,omitempty" xml:"code,omitempty"`
+	// The operation description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
 }
 
 // LoadNewSatelliteImageBadRequestResponseBody is the type of the "Images"
@@ -62,6 +99,82 @@ type LoadNewSatelliteImageInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// GetRawSatelliteImageBadRequestResponseBody is the type of the "Images"
+// service "Get raw satellite image" endpoint HTTP response body for the
+// "BadRequest" error.
+type GetRawSatelliteImageBadRequestResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// GetRawSatelliteImageInternalErrorResponseBody is the type of the "Images"
+// service "Get raw satellite image" endpoint HTTP response body for the
+// "InternalError" error.
+type GetRawSatelliteImageInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// LoadNewProcessedSatelliteImageBadRequestResponseBody is the type of the
+// "Images" service "Load new processed satellite image" endpoint HTTP response
+// body for the "BadRequest" error.
+type LoadNewProcessedSatelliteImageBadRequestResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// LoadNewProcessedSatelliteImageInternalErrorResponseBody is the type of the
+// "Images" service "Load new processed satellite image" endpoint HTTP response
+// body for the "InternalError" error.
+type LoadNewProcessedSatelliteImageInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // GeographicInformationRequestBody is used to define fields on request body
 // types.
 type GeographicInformationRequestBody struct {
@@ -77,6 +190,26 @@ type NormalizedIndexesRequestBody struct {
 	Ndvi []float64 `form:"ndvi,omitempty" json:"ndvi,omitempty" xml:"ndvi,omitempty"`
 	// Normalized difference water index
 	Ndwi []float64 `form:"ndwi,omitempty" json:"ndwi,omitempty" xml:"ndwi,omitempty"`
+}
+
+// NewLoadNewSatelliteImageResponseBody builds the HTTP response body from the
+// result of the "Load new satellite image" endpoint of the "Images" service.
+func NewLoadNewSatelliteImageResponseBody(res *imagesviews.GoaResultView) *LoadNewSatelliteImageResponseBody {
+	body := &LoadNewSatelliteImageResponseBody{
+		Code:        res.Code,
+		Description: res.Description,
+	}
+	return body
+}
+
+// NewGetRawSatelliteImageResponseBody builds the HTTP response body from the
+// result of the "Get raw satellite image" endpoint of the "Images" service.
+func NewGetRawSatelliteImageResponseBody(res *imagesviews.GoaResultView) *GetRawSatelliteImageResponseBody {
+	body := &GetRawSatelliteImageResponseBody{
+		Code:        res.Code,
+		Description: res.Description,
+	}
+	return body
 }
 
 // NewLoadNewSatelliteImageBadRequestResponseBody builds the HTTP response body
@@ -109,11 +242,93 @@ func NewLoadNewSatelliteImageInternalErrorResponseBody(res *goa.ServiceError) *L
 	return body
 }
 
-// NewLoadNewSatelliteImageSatelliteImage builds a Images service Load new
+// NewGetRawSatelliteImageBadRequestResponseBody builds the HTTP response body
+// from the result of the "Get raw satellite image" endpoint of the "Images"
+// service.
+func NewGetRawSatelliteImageBadRequestResponseBody(res *goa.ServiceError) *GetRawSatelliteImageBadRequestResponseBody {
+	body := &GetRawSatelliteImageBadRequestResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewGetRawSatelliteImageInternalErrorResponseBody builds the HTTP response
+// body from the result of the "Get raw satellite image" endpoint of the
+// "Images" service.
+func NewGetRawSatelliteImageInternalErrorResponseBody(res *goa.ServiceError) *GetRawSatelliteImageInternalErrorResponseBody {
+	body := &GetRawSatelliteImageInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewLoadNewProcessedSatelliteImageBadRequestResponseBody builds the HTTP
+// response body from the result of the "Load new processed satellite image"
+// endpoint of the "Images" service.
+func NewLoadNewProcessedSatelliteImageBadRequestResponseBody(res *goa.ServiceError) *LoadNewProcessedSatelliteImageBadRequestResponseBody {
+	body := &LoadNewProcessedSatelliteImageBadRequestResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewLoadNewProcessedSatelliteImageInternalErrorResponseBody builds the HTTP
+// response body from the result of the "Load new processed satellite image"
+// endpoint of the "Images" service.
+func NewLoadNewProcessedSatelliteImageInternalErrorResponseBody(res *goa.ServiceError) *LoadNewProcessedSatelliteImageInternalErrorResponseBody {
+	body := &LoadNewProcessedSatelliteImageInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewLoadNewSatelliteImageRawSatelliteImage builds a Images service Load new
 // satellite image endpoint payload.
-func NewLoadNewSatelliteImageSatelliteImage(body *LoadNewSatelliteImageRequestBody) *images.SatelliteImage {
-	v := &images.SatelliteImage{
+func NewLoadNewSatelliteImageRawSatelliteImage(body *LoadNewSatelliteImageRequestBody) *images.RawSatelliteImage {
+	v := &images.RawSatelliteImage{
 		ID:       body.ID,
+		FileName: body.FileName,
+	}
+
+	return v
+}
+
+// NewGetRawSatelliteImagePayload builds a Images service Get raw satellite
+// image endpoint payload.
+func NewGetRawSatelliteImagePayload(body *GetRawSatelliteImageRequestBody) *images.GetRawSatelliteImagePayload {
+	v := &images.GetRawSatelliteImagePayload{
+		FileName: body.FileName,
+	}
+
+	return v
+}
+
+// NewLoadNewProcessedSatelliteImageProcessedSatelliteImage builds a Images
+// service Load new processed satellite image endpoint payload.
+func NewLoadNewProcessedSatelliteImageProcessedSatelliteImage(body *LoadNewProcessedSatelliteImageRequestBody) *images.ProcessedSatelliteImage {
+	v := &images.ProcessedSatelliteImage{
+		ID:       body.ID,
+		FileName: body.FileName,
 		DateTime: body.DateTime,
 	}
 	if body.GeographicInformation != nil {
@@ -126,9 +341,9 @@ func NewLoadNewSatelliteImageSatelliteImage(body *LoadNewSatelliteImageRequestBo
 	return v
 }
 
-// ValidateLoadNewSatelliteImageRequestBody runs the validations defined on
-// Load New Satellite ImageRequestBody
-func ValidateLoadNewSatelliteImageRequestBody(body *LoadNewSatelliteImageRequestBody) (err error) {
+// ValidateLoadNewProcessedSatelliteImageRequestBody runs the validations
+// defined on Load New Processed Satellite ImageRequestBody
+func ValidateLoadNewProcessedSatelliteImageRequestBody(body *LoadNewProcessedSatelliteImageRequestBody) (err error) {
 	if body.DateTime != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.date_time", *body.DateTime, goa.FormatDateTime))
 	}

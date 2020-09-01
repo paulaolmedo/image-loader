@@ -18,8 +18,10 @@ import (
 
 // Server lists the Images service endpoint HTTP handlers.
 type Server struct {
-	Mounts                []*MountPoint
-	LoadNewSatelliteImage http.Handler
+	Mounts                         []*MountPoint
+	LoadNewSatelliteImage          http.Handler
+	GetRawSatelliteImage           http.Handler
+	LoadNewProcessedSatelliteImage http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -56,8 +58,12 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"LoadNewSatelliteImage", "POST", "/image-loader/api/v1/images"},
+			{"GetRawSatelliteImage", "GET", "/image-loader/api/v1/images"},
+			{"LoadNewProcessedSatelliteImage", "POST", "/image-loader/api/v1/images/processed"},
 		},
-		LoadNewSatelliteImage: NewLoadNewSatelliteImageHandler(e.LoadNewSatelliteImage, mux, decoder, encoder, errhandler, formatter),
+		LoadNewSatelliteImage:          NewLoadNewSatelliteImageHandler(e.LoadNewSatelliteImage, mux, decoder, encoder, errhandler, formatter),
+		GetRawSatelliteImage:           NewGetRawSatelliteImageHandler(e.GetRawSatelliteImage, mux, decoder, encoder, errhandler, formatter),
+		LoadNewProcessedSatelliteImage: NewLoadNewProcessedSatelliteImageHandler(e.LoadNewProcessedSatelliteImage, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -67,11 +73,15 @@ func (s *Server) Service() string { return "Images" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.LoadNewSatelliteImage = m(s.LoadNewSatelliteImage)
+	s.GetRawSatelliteImage = m(s.GetRawSatelliteImage)
+	s.LoadNewProcessedSatelliteImage = m(s.LoadNewProcessedSatelliteImage)
 }
 
 // Mount configures the mux to serve the Images endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountLoadNewSatelliteImageHandler(mux, h.LoadNewSatelliteImage)
+	MountGetRawSatelliteImageHandler(mux, h.GetRawSatelliteImage)
+	MountLoadNewProcessedSatelliteImageHandler(mux, h.LoadNewProcessedSatelliteImage)
 }
 
 // MountLoadNewSatelliteImageHandler configures the mux to serve the "Images"
@@ -104,6 +114,109 @@ func NewLoadNewSatelliteImageHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "Load new satellite image")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "Images")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountGetRawSatelliteImageHandler configures the mux to serve the "Images"
+// service "Get raw satellite image" endpoint.
+func MountGetRawSatelliteImageHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/image-loader/api/v1/images", f)
+}
+
+// NewGetRawSatelliteImageHandler creates a HTTP handler which loads the HTTP
+// request and calls the "Images" service "Get raw satellite image" endpoint.
+func NewGetRawSatelliteImageHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetRawSatelliteImageRequest(mux, decoder)
+		encodeResponse = EncodeGetRawSatelliteImageResponse(encoder)
+		encodeError    = EncodeGetRawSatelliteImageError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "Get raw satellite image")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "Images")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountLoadNewProcessedSatelliteImageHandler configures the mux to serve the
+// "Images" service "Load new processed satellite image" endpoint.
+func MountLoadNewProcessedSatelliteImageHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/image-loader/api/v1/images/processed", f)
+}
+
+// NewLoadNewProcessedSatelliteImageHandler creates a HTTP handler which loads
+// the HTTP request and calls the "Images" service "Load new processed
+// satellite image" endpoint.
+func NewLoadNewProcessedSatelliteImageHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeLoadNewProcessedSatelliteImageRequest(mux, decoder)
+		encodeResponse = EncodeLoadNewProcessedSatelliteImageResponse(encoder)
+		encodeError    = EncodeLoadNewProcessedSatelliteImageError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "Load new processed satellite image")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "Images")
 		payload, err := decodeRequest(r)
 		if err != nil {

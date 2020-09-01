@@ -11,3 +11,13 @@ package client
 func LoadNewSatelliteImageImagesPath() string {
 	return "/image-loader/api/v1/images"
 }
+
+// GetRawSatelliteImageImagesPath returns the URL path to the Images service Get raw satellite image HTTP endpoint.
+func GetRawSatelliteImageImagesPath() string {
+	return "/image-loader/api/v1/images"
+}
+
+// LoadNewProcessedSatelliteImageImagesPath returns the URL path to the Images service Load new processed satellite image HTTP endpoint.
+func LoadNewProcessedSatelliteImageImagesPath() string {
+	return "/image-loader/api/v1/images/processed"
+}

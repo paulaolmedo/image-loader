@@ -3,6 +3,9 @@ module image-loader
 go 1.13
 
 require (
+	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
+	github.com/namsral/flag v1.7.4-pre
+	go.mongodb.org/mongo-driver v1.3.0
 	goa.design/goa v2.2.3+incompatible // indirect
 	goa.design/goa/v3 v3.2.3
 	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect

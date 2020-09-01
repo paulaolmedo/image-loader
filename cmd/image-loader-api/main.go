@@ -63,8 +63,14 @@ func main() {
 	logger.Println("**** end readed config ****")
 
 	// Dao creation
-	var imageDao *mongo.ImageDao
-	imageDao, err := mongo.AddNewImage(mdbStr, logger)
+	/*var imageDao *mongo.ImageDao
+	imageDao, err := mongo.AddNewImageDao(mdbStr, logger)
+	if err != nil {
+		logger.Fatal(fmt.Errorf("Error creating imageDao: %s", err.Error()))
+	}*/
+
+	//mongo client creation
+	imageDao, err := mongo.InitiateImageDao(mdbStr)
 	if err != nil {
 		logger.Fatal(fmt.Errorf("Error creating imageDao: %s", err.Error()))
 	}

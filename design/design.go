@@ -63,14 +63,14 @@ var OperationResult = ResultType("vnd.application/goa.Result+json", func() {
 })
 
 /********** Services definition **********/
-var _ = Service("Images", func() {
+var _ = Service("Raw images", func() {
 	HTTP(func() {
-		Path("/images")
+		Path("/raw-images")
 	})
 	Error("InternalError")
 	Error("BadRequest")
 	Error("NotFound")
-	Method("Load new satellite image", func() {
+	Method("Load new raw satellite image", func() {
 		Description("loads a new image into the database")
 		Payload(RawSatelliteImage)
 		Result(OperationResult)

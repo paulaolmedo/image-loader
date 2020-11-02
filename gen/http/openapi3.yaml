@@ -7,13 +7,13 @@ servers:
 - url: http://localhost:80
   description: Default server for Satellite Image Loader API
 paths:
-  /image-loader/api/v1/images:
+  /image-loader/api/v1/raw-images:
     get:
       tags:
-      - Images
-      summary: Get raw satellite image Images
+      - Raw images
+      summary: Get raw satellite image Raw images
       description: get a raw image from the database
-      operationId: Images#Get raw satellite image
+      operationId: Raw images#Get raw satellite image
       requestBody:
         required: true
         content:
@@ -60,16 +60,16 @@ paths:
                 timeout: true
     post:
       tags:
-      - Images
-      summary: Load new satellite image Images
+      - Raw images
+      summary: Load new raw satellite image Raw images
       description: loads a new image into the database
-      operationId: Images#Load new satellite image
+      operationId: Raw images#Load new raw satellite image
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoadNewSatelliteImageRequestBody'
+              $ref: '#/components/schemas/LoadNewRawSatelliteImageRequestBody'
             example:
               file_name: Voluptates architecto.
               id: Consequuntur non placeat ab.
@@ -109,13 +109,13 @@ paths:
                 name: bad_request
                 temporary: true
                 timeout: false
-  /image-loader/api/v1/images/processed:
+  /image-loader/api/v1/raw-images/processed:
     post:
       tags:
-      - Images
-      summary: Load new processed satellite image Images
+      - Raw images
+      summary: Load new processed satellite image Raw images
       description: loads a new image into the database
-      operationId: Images#Load new processed satellite image
+      operationId: Raw images#Load new processed satellite image
       requestBody:
         required: true
         content:
@@ -299,7 +299,7 @@ components:
           - 0.08253636129242008
           - 0.030755381445945546
           - 0.659276994468877
-    LoadNewSatelliteImageRequestBody:
+    LoadNewRawSatelliteImageRequestBody:
       type: object
       properties:
         file_name:

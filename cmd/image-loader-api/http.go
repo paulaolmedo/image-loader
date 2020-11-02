@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	images "image-loader/gen/images"
-	imagessrv "image-loader/gen/http/images/server"
+	rawimagessrv "image-loader/gen/http/raw_images/server"
+	raw_images "image-loader/gen/raw_images"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,7 +18,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *images.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *raw_images.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -49,14 +49,14 @@ func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *images.E
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		imagesServer *imagessrv.Server
+		imagesServer *rawimagessrv.Server
 	)
 	{
 		eh := errorHandler(logger)
-		imagesServer = imagessrv.New(imagesEndpoints, mux, dec, enc, eh, nil)
+		imagesServer = rawimagessrv.New(imagesEndpoints, mux, dec, enc, eh, nil)
 	}
 	// Configure the mux.
-	imagessrv.Mount(mux, imagesServer)
+	rawimagessrv.Mount(mux, imagesServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.

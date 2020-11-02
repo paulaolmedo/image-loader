@@ -14,85 +14,85 @@ produces:
 - application/xml
 - application/gob
 paths:
-  /images:
+  /raw-images:
     get:
       tags:
-      - Images
-      summary: Get raw satellite image Images
+      - Raw images
+      summary: Get raw satellite image Raw images
       description: get a raw image from the database
-      operationId: Images#Get raw satellite image
+      operationId: Raw images#Get raw satellite image
       parameters:
       - name: Get Raw Satellite ImageRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/ImagesGetRawSatelliteImageRequestBody'
+          $ref: '#/definitions/RawImagesGetRawSatelliteImageRequestBody'
       responses:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/ImagesGetRawSatelliteImageResponseBody'
+            $ref: '#/definitions/RawImagesGetRawSatelliteImageResponseBody'
         "400":
           description: Bad Request response.
           schema:
-            $ref: '#/definitions/ImagesGetRawSatelliteImageBadRequestResponseBody'
+            $ref: '#/definitions/RawImagesGetRawSatelliteImageBadRequestResponseBody'
         "500":
           description: Internal Server Error response.
           schema:
-            $ref: '#/definitions/ImagesGetRawSatelliteImageInternalErrorResponseBody'
+            $ref: '#/definitions/RawImagesGetRawSatelliteImageInternalErrorResponseBody'
       schemes:
       - http
     post:
       tags:
-      - Images
-      summary: Load new satellite image Images
+      - Raw images
+      summary: Load new raw satellite image Raw images
       description: loads a new image into the database
-      operationId: Images#Load new satellite image
+      operationId: Raw images#Load new raw satellite image
       parameters:
-      - name: Load New Satellite ImageRequestBody
+      - name: Load New Raw Satellite ImageRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/ImagesLoadNewSatelliteImageRequestBody'
+          $ref: '#/definitions/RawImagesLoadNewRawSatelliteImageRequestBody'
       responses:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/ImagesLoadNewSatelliteImageResponseBody'
+            $ref: '#/definitions/RawImagesLoadNewRawSatelliteImageResponseBody'
         "400":
           description: Bad Request response.
           schema:
-            $ref: '#/definitions/ImagesLoadNewSatelliteImageBadRequestResponseBody'
+            $ref: '#/definitions/RawImagesLoadNewRawSatelliteImageBadRequestResponseBody'
         "500":
           description: Internal Server Error response.
           schema:
-            $ref: '#/definitions/ImagesLoadNewSatelliteImageInternalErrorResponseBody'
+            $ref: '#/definitions/RawImagesLoadNewRawSatelliteImageInternalErrorResponseBody'
       schemes:
       - http
-  /images/processed:
+  /raw-images/processed:
     post:
       tags:
-      - Images
-      summary: Load new processed satellite image Images
+      - Raw images
+      summary: Load new processed satellite image Raw images
       description: loads a new image into the database
-      operationId: Images#Load new processed satellite image
+      operationId: Raw images#Load new processed satellite image
       parameters:
       - name: Load New Processed Satellite ImageRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/ImagesLoadNewProcessedSatelliteImageRequestBody'
+          $ref: '#/definitions/RawImagesLoadNewProcessedSatelliteImageRequestBody'
       responses:
         "200":
           description: OK response.
         "400":
           description: Bad Request response.
           schema:
-            $ref: '#/definitions/ImagesLoadNewProcessedSatelliteImageBadRequestResponseBody'
+            $ref: '#/definitions/RawImagesLoadNewProcessedSatelliteImageBadRequestResponseBody'
         "500":
           description: Internal Server Error response.
           schema:
-            $ref: '#/definitions/ImagesLoadNewProcessedSatelliteImageInternalErrorResponseBody'
+            $ref: '#/definitions/RawImagesLoadNewProcessedSatelliteImageInternalErrorResponseBody'
       schemes:
       - http
 definitions:
@@ -116,7 +116,43 @@ definitions:
       coordinates:
         Voluptatem voluptas eligendi consectetur numquam et.: 0.9199595062652263
       tag_name: Maxime eos ipsum error.
-  ImagesGetRawSatelliteImageBadRequestResponseBody:
+  NormalizedIndexesRequestBody:
+    title: NormalizedIndexesRequestBody
+    type: object
+    properties:
+      ndvi:
+        type: array
+        items:
+          type: number
+          example: 0.29361655508178913
+          format: double
+        description: Normalized difference vegetation index
+        example:
+        - 0.1295074915192479
+        - 0.01823829152404492
+        - 0.022774522940319255
+        - 0.37927096554694995
+      ndwi:
+        type: array
+        items:
+          type: number
+          example: 0.2949079824155343
+          format: double
+        description: Normalized difference water index
+        example:
+        - 0.9057648848468528
+        - 0.8938478045702407
+        - 0.06417810261390403
+        - 0.5766828284551065
+    example:
+      ndvi:
+      - 0.6410677915231439
+      - 0.3559820482858073
+      ndwi:
+      - 0.12166539372280044
+      - 0.3215028947732234
+      - 0.9666702266506965
+  RawImagesGetRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -159,7 +195,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesGetRawSatelliteImageInternalErrorResponseBody:
+  RawImagesGetRawSatelliteImageInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -202,8 +238,8 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesGetRawSatelliteImageRequestBody:
-    title: ImagesGetRawSatelliteImageRequestBody
+  RawImagesGetRawSatelliteImageRequestBody:
+    title: RawImagesGetRawSatelliteImageRequestBody
     type: object
     properties:
       file_name:
@@ -212,7 +248,7 @@ definitions:
         example: Accusamus maiores.
     example:
       file_name: Omnis velit et dolores.
-  ImagesGetRawSatelliteImageResponseBody:
+  RawImagesGetRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
     properties:
@@ -228,7 +264,7 @@ definitions:
     example:
       code: Incidunt fuga maxime rerum fugiat.
       description: Voluptates sit.
-  ImagesLoadNewProcessedSatelliteImageBadRequestResponseBody:
+  RawImagesLoadNewProcessedSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -271,7 +307,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesLoadNewProcessedSatelliteImageInternalErrorResponseBody:
+  RawImagesLoadNewProcessedSatelliteImageInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -314,8 +350,8 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesLoadNewProcessedSatelliteImageRequestBody:
-    title: ImagesLoadNewProcessedSatelliteImageRequestBody
+  RawImagesLoadNewProcessedSatelliteImageRequestBody:
+    title: RawImagesLoadNewProcessedSatelliteImageRequestBody
     type: object
     properties:
       date_time:
@@ -354,7 +390,7 @@ definitions:
         - 0.08253636129242008
         - 0.030755381445945546
         - 0.659276994468877
-  ImagesLoadNewSatelliteImageBadRequestResponseBody:
+  RawImagesLoadNewRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -382,7 +418,7 @@ definitions:
         type: boolean
         description: Is the error a timeout?
         example: false
-    description: Load new satellite image_BadRequest_Response_Body result type (default view)
+    description: Load new raw satellite image_BadRequest_Response_Body result type (default view)
     example:
       fault: true
       id: 123abc
@@ -397,7 +433,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesLoadNewSatelliteImageInternalErrorResponseBody:
+  RawImagesLoadNewRawSatelliteImageInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -425,7 +461,7 @@ definitions:
         type: boolean
         description: Is the error a timeout?
         example: true
-    description: Load new satellite image_InternalError_Response_Body result type (default view)
+    description: Load new raw satellite image_InternalError_Response_Body result type (default view)
     example:
       fault: true
       id: 123abc
@@ -440,8 +476,8 @@ definitions:
     - temporary
     - timeout
     - fault
-  ImagesLoadNewSatelliteImageRequestBody:
-    title: ImagesLoadNewSatelliteImageRequestBody
+  RawImagesLoadNewRawSatelliteImageRequestBody:
+    title: RawImagesLoadNewRawSatelliteImageRequestBody
     type: object
     properties:
       file_name:
@@ -455,7 +491,7 @@ definitions:
     example:
       file_name: Voluptatibus ratione.
       id: Explicabo ullam.
-  ImagesLoadNewSatelliteImageResponseBody:
+  RawImagesLoadNewRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
     properties:
@@ -467,43 +503,7 @@ definitions:
         type: string
         description: The operation description
         example: Nam dolore impedit perferendis et.
-    description: Load New Satellite ImageResponseBody result type (default view)
+    description: Load New Raw Satellite ImageResponseBody result type (default view)
     example:
       code: Cum facere rerum similique.
       description: Beatae quod deleniti at fuga consequatur numquam.
-  NormalizedIndexesRequestBody:
-    title: NormalizedIndexesRequestBody
-    type: object
-    properties:
-      ndvi:
-        type: array
-        items:
-          type: number
-          example: 0.29361655508178913
-          format: double
-        description: Normalized difference vegetation index
-        example:
-        - 0.1295074915192479
-        - 0.01823829152404492
-        - 0.022774522940319255
-        - 0.37927096554694995
-      ndwi:
-        type: array
-        items:
-          type: number
-          example: 0.2949079824155343
-          format: double
-        description: Normalized difference water index
-        example:
-        - 0.9057648848468528
-        - 0.8938478045702407
-        - 0.06417810261390403
-        - 0.5766828284551065
-    example:
-      ndvi:
-      - 0.6410677915231439
-      - 0.3559820482858073
-      ndwi:
-      - 0.12166539372280044
-      - 0.3215028947732234
-      - 0.9666702266506965

@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	images "image-loader/gen/images"
+	raw_images "image-loader/gen/raw_images"
 	"time"
 )
 
@@ -33,6 +33,6 @@ type RawSatelliteImageDetails struct {
 type ProcessedSatelliteImageDetails struct {
 	ID                           string    `bson:"_id"`
 	dateTime                     time.Time `bson:"date_time"`
-	images.GeographicInformation `bson:"geographic_information"`
-	images.NormalizedIndexes     `bson:"normalized_indexes"`
+	raw_images.GeographicInformation `bson:"geographic_information"`
+	raw_images.NormalizedIndexes     `bson:"normalized_indexes"`
 }

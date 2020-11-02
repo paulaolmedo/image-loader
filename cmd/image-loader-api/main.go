@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	imageLoaderAPI "image-loader"
-	images "image-loader/gen/images"
+	raw_images "image-loader/gen/raw_images"
 	"image-loader/mongo"
 	"log"
 	"net/url"
@@ -81,7 +81,7 @@ func main() {
 
 	// Initialize the services.
 	var (
-		imagesSrv images.Service
+		imagesSrv raw_images.Service
 	)
 	{
 		imagesSrv = imageLoaderAPI.NewImageLoader(logger, imageDao)
@@ -91,10 +91,10 @@ func main() {
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
-		imagesEndpoints *images.Endpoints
+		imagesEndpoints *raw_images.Endpoints
 	)
 	{
-		imagesEndpoints = images.NewEndpoints(imagesSrv)
+		imagesEndpoints = raw_images.NewEndpoints(imagesSrv)
 	}
 
 	// Create channel used by both the signal handler and server goroutines

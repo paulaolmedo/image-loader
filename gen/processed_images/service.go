@@ -35,8 +35,6 @@ var MethodNames = [2]string{"Load new processed satellite image", "Get processed
 // ProcessedSatelliteImage is the payload type of the Processed images service
 // Load new processed satellite image method.
 type ProcessedSatelliteImage struct {
-	// The image identifier
-	ID *string `bson:"_id"`
 	// File name of the processed image
 	FileName              *string
 	GeographicInformation *GeographicInformation

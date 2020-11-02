@@ -18,8 +18,6 @@ import (
 // images" service "Load new processed satellite image" endpoint HTTP request
 // body.
 type LoadNewProcessedSatelliteImageRequestBody struct {
-	// The image identifier
-	ID *string `bson:"_id"`
 	// File name of the processed image
 	FileName              *string                           `form:"file_name,omitempty" json:"file_name,omitempty" xml:"file_name,omitempty"`
 	GeographicInformation *GeographicInformationRequestBody `form:"geographic_information,omitempty" json:"geographic_information,omitempty" xml:"geographic_information,omitempty"`
@@ -152,7 +150,6 @@ type NormalizedIndexesRequestBody struct {
 // "Processed images" service.
 func NewLoadNewProcessedSatelliteImageRequestBody(p *processedimages.ProcessedSatelliteImage) *LoadNewProcessedSatelliteImageRequestBody {
 	body := &LoadNewProcessedSatelliteImageRequestBody{
-		ID:       p.ID,
 		FileName: p.FileName,
 		DateTime: p.DateTime,
 	}

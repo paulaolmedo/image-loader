@@ -21,7 +21,7 @@ func BuildLoadNewRawSatelliteImagePayload(rawImagesLoadNewRawSatelliteImageBody 
 	{
 		err = json.Unmarshal([]byte(rawImagesLoadNewRawSatelliteImageBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Animi exercitationem architecto eum laborum dolor.\",\n      \"id\": \"Voluptates architecto.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Ab fugiat voluptates architecto et.\",\n      \"id\": \"Consectetur quis sint voluptatem optio consequuntur non.\"\n   }'")
 		}
 	}
 	v := &rawimages.RawSatelliteImage{
@@ -40,7 +40,7 @@ func BuildGetRawSatelliteImagePayload(rawImagesGetRawSatelliteImageBody string) 
 	{
 		err = json.Unmarshal([]byte(rawImagesGetRawSatelliteImageBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Unde sed dolorum.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Vel omnis adipisci dolor aut nobis quia.\"\n   }'")
 		}
 	}
 	v := &rawimages.GetRawSatelliteImagePayload{

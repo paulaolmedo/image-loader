@@ -32,31 +32,28 @@ processed- images (load- new- processed- satellite- image|get- processed- satell
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` raw- images load- new- raw- satellite- image --body '{
-      "file_name": "Animi exercitationem architecto eum laborum dolor.",
-      "id": "Voluptates architecto."
+      "file_name": "Ab fugiat voluptates architecto et.",
+      "id": "Consectetur quis sint voluptatem optio consequuntur non."
    }'` + "\n" +
 		os.Args[0] + ` processed- images load- new- processed- satellite- image --body '{
-      "date_time": "2008-09-18T10:35:05Z",
-      "file_name": "Reprehenderit tempore nesciunt aut.",
+      "date_time": "2012-04-04T19:21:12Z",
+      "file_name": "Sunt aliquam totam dolores aut voluptatem sunt.",
       "geographic_information": {
          "coordinates": {
-            "Ex exercitationem aut reiciendis quod voluptate incidunt.": 0.7392343776263494,
-            "Molestiae sed molestias praesentium rerum.": 0.3908551358201754,
-            "Qui qui iusto praesentium.": 0.19181675265671314
+            "Dolores aut reprehenderit tempore nesciunt.": 0.08537234062709087,
+            "Incidunt odit tempore.": 0.4612094935047014
          },
-         "tag_name": "Incidunt odit tempore."
+         "tag_name": "Ut qui."
       },
-      "id": "Sunt occaecati ut qui libero similique dolores.",
       "normalized_indexes": {
          "ndvi": [
-            0.6127802172492277,
-            0.004560762359582058,
-            0.480367361557016
+            0.3904972148805288,
+            0.6699739812364446,
+            0.027588443100172985
          ],
          "ndwi": [
-            0.08253636129242008,
-            0.030755381445945546,
-            0.659276994468877
+            0.508680136375543,
+            0.9307709997993568
          ]
       }
    }'` + "\n" +
@@ -223,8 +220,8 @@ loads a new image into the database
 
 Example:
     `+os.Args[0]+` raw- images load- new- raw- satellite- image --body '{
-      "file_name": "Animi exercitationem architecto eum laborum dolor.",
-      "id": "Voluptates architecto."
+      "file_name": "Ab fugiat voluptates architecto et.",
+      "id": "Consectetur quis sint voluptatem optio consequuntur non."
    }'
 `, os.Args[0])
 }
@@ -237,7 +234,7 @@ get a raw image from the database
 
 Example:
     `+os.Args[0]+` raw- images get- raw- satellite- image --body '{
-      "file_name": "Unde sed dolorum."
+      "file_name": "Vel omnis adipisci dolor aut nobis quia."
    }'
 `, os.Args[0])
 }
@@ -265,27 +262,24 @@ loads a new processed image into the database
 
 Example:
     `+os.Args[0]+` processed- images load- new- processed- satellite- image --body '{
-      "date_time": "2008-09-18T10:35:05Z",
-      "file_name": "Reprehenderit tempore nesciunt aut.",
+      "date_time": "2012-04-04T19:21:12Z",
+      "file_name": "Sunt aliquam totam dolores aut voluptatem sunt.",
       "geographic_information": {
          "coordinates": {
-            "Ex exercitationem aut reiciendis quod voluptate incidunt.": 0.7392343776263494,
-            "Molestiae sed molestias praesentium rerum.": 0.3908551358201754,
-            "Qui qui iusto praesentium.": 0.19181675265671314
+            "Dolores aut reprehenderit tempore nesciunt.": 0.08537234062709087,
+            "Incidunt odit tempore.": 0.4612094935047014
          },
-         "tag_name": "Incidunt odit tempore."
+         "tag_name": "Ut qui."
       },
-      "id": "Sunt occaecati ut qui libero similique dolores.",
       "normalized_indexes": {
          "ndvi": [
-            0.6127802172492277,
-            0.004560762359582058,
-            0.480367361557016
+            0.3904972148805288,
+            0.6699739812364446,
+            0.027588443100172985
          ],
          "ndwi": [
-            0.08253636129242008,
-            0.030755381445945546,
-            0.659276994468877
+            0.508680136375543,
+            0.9307709997993568
          ]
       }
    }'
@@ -300,7 +294,7 @@ get a processed image from the database
 
 Example:
     `+os.Args[0]+` processed- images get- processed- satellite- image --body '{
-      "file_name": "Dolore impedit perferendis et ea."
+      "file_name": "Voluptatem nihil."
    }'
 `, os.Args[0])
 }

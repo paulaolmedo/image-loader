@@ -21,7 +21,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
             example:
-              file_name: Dolore impedit perferendis et ea.
+              file_name: Voluptatem nihil.
       responses:
         "200":
           description: ""
@@ -30,74 +30,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GoaResult'
               example:
-                code: Facere rerum similique repudiandae beatae.
-                description: Deleniti at fuga.
-        "400":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: false
-    post:
-      tags:
-      - Processed images
-      summary: Load new processed satellite image Processed images
-      description: loads a new processed image into the database
-      operationId: Processed images#Load new processed satellite image
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoadNewProcessedSatelliteImageRequestBody'
-            example:
-              date_time: "2008-09-18T10:35:05Z"
-              file_name: Reprehenderit tempore nesciunt aut.
-              geographic_information:
-                coordinates:
-                  Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
-                  Molestiae sed molestias praesentium rerum.: 0.3908551358201754
-                  Qui qui iusto praesentium.: 0.19181675265671314
-                tag_name: Incidunt odit tempore.
-              id: Sunt occaecati ut qui libero similique dolores.
-              normalized_indexes:
-                ndvi:
-                - 0.6127802172492277
-                - 0.004560762359582058
-                - 0.480367361557016
-                ndwi:
-                - 0.08253636129242008
-                - 0.030755381445945546
-                - 0.659276994468877
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoaResult'
-              example:
-                code: Omnis molestiae et id.
+                code: Consectetur omnis molestiae et id.
                 description: Laudantium cumque.
         "400":
           description: ""
@@ -125,6 +58,70 @@ paths:
                 name: bad_request
                 temporary: false
                 timeout: false
+    post:
+      tags:
+      - Processed images
+      summary: Load new processed satellite image Processed images
+      description: loads a new processed image into the database
+      operationId: Processed images#Load new processed satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNewProcessedSatelliteImageRequestBody'
+            example:
+              date_time: "2012-04-04T19:21:12Z"
+              file_name: Sunt aliquam totam dolores aut voluptatem sunt.
+              geographic_information:
+                coordinates:
+                  Dolores aut reprehenderit tempore nesciunt.: 0.08537234062709087
+                  Incidunt odit tempore.: 0.4612094935047014
+                tag_name: Ut qui.
+              normalized_indexes:
+                ndvi:
+                - 0.3904972148805288
+                - 0.6699739812364446
+                - 0.027588443100172985
+                ndwi:
+                - 0.508680136375543
+                - 0.9307709997993568
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Velit et velit et et.
+                description: Sunt occaecati maiores omnis eligendi.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
   /image-loader/api/v1/raw-images:
     get:
       tags:
@@ -139,7 +136,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
             example:
-              file_name: Unde sed dolorum.
+              file_name: Vel omnis adipisci dolor aut nobis quia.
       responses:
         "200":
           description: ""
@@ -148,22 +145,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/GoaResult'
               example:
-                code: Tempore odit quibusdam.
-                description: Facilis et debitis expedita.
+                code: Eos ut unde sed.
+                description: Cupiditate tempore odit.
         "400":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: true
-        "500":
           description: ""
           content:
             application/vnd.goa.error:
@@ -175,7 +159,20 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
     post:
       tags:
       - Raw images
@@ -189,8 +186,8 @@ paths:
             schema:
               $ref: '#/components/schemas/LoadNewRawSatelliteImageRequestBody'
             example:
-              file_name: Animi exercitationem architecto eum laborum dolor.
-              id: Voluptates architecto.
+              file_name: Ab fugiat voluptates architecto et.
+              id: Consectetur quis sint voluptatem optio consequuntur non.
       responses:
         "200":
           description: ""
@@ -199,8 +196,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/GoaResult'
               example:
-                code: Eligendi ipsum ipsa.
-                description: Temporibus sequi minus.
+                code: Ut ad.
+                description: Eos occaecati eligendi sapiente.
         "400":
           description: ""
           content:
@@ -213,7 +210,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -225,8 +222,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
 components:
   schemas:
     Error:
@@ -257,7 +254,7 @@ components:
           description: Is the error a timeout?
           example: true
       example:
-        fault: false
+        fault: true
         id: 123abc
         message: parameter 'p' must be an integer
         name: bad_request
@@ -283,7 +280,7 @@ components:
         tag_name:
           type: string
           description: Non-forgetable identifier
-          example: Aut veritatis cum placeat.
+          example: Cum placeat.
       example:
         coordinates:
           Qui id.: 0.7188540978805499
@@ -295,23 +292,23 @@ components:
         file_name:
           type: string
           description: File name of the raw image
-          example: Voluptatem inventore quia et sequi.
+          example: Reprehenderit sapiente aut ratione commodi ab.
       example:
-        file_name: Enim reprehenderit.
+        file_name: Et ut blanditiis est ducimus omnis.
     GoaResult:
       type: object
       properties:
         code:
           type: string
           description: The operation code
-          example: Provident totam velit non voluptates voluptas mollitia.
+          example: Voluptates voluptas mollitia minima ipsum magnam tempora.
         description:
           type: string
           description: The operation description
-          example: Ipsum magnam.
+          example: Magnam perferendis molestias molestiae eos.
       example:
-        code: Ab magnam perferendis molestias.
-        description: Eos mollitia ea maxime fugiat atque.
+        code: Ea maxime fugiat atque fugit nulla.
+        description: Perspiciatis vel quis minima.
     LoadNewProcessedSatelliteImageRequestBody:
       type: object
       properties:
@@ -323,48 +320,41 @@ components:
         file_name:
           type: string
           description: File name of the processed image
-          example: Est ducimus omnis consequatur.
+          example: Sed aut.
         geographic_information:
           $ref: '#/components/schemas/GeographicInformation'
-        id:
-          type: string
-          description: The image identifier
-          example: Aut ratione commodi ab sed et ut.
         normalized_indexes:
           $ref: '#/components/schemas/NormalizedIndexes'
       example:
-        date_time: "1975-08-14T07:10:53Z"
-        file_name: Possimus harum aut molestiae.
+        date_time: "1970-06-11T00:23:43Z"
+        file_name: Facere delectus sit.
         geographic_information:
           coordinates:
-            Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
-            Molestiae sed molestias praesentium rerum.: 0.3908551358201754
-            Qui qui iusto praesentium.: 0.19181675265671314
-          tag_name: Incidunt odit tempore.
-        id: Facere delectus sit.
+            Dolores aut reprehenderit tempore nesciunt.: 0.08537234062709087
+            Incidunt odit tempore.: 0.4612094935047014
+          tag_name: Ut qui.
         normalized_indexes:
           ndvi:
-          - 0.6127802172492277
-          - 0.004560762359582058
-          - 0.480367361557016
+          - 0.3904972148805288
+          - 0.6699739812364446
+          - 0.027588443100172985
           ndwi:
-          - 0.08253636129242008
-          - 0.030755381445945546
-          - 0.659276994468877
+          - 0.508680136375543
+          - 0.9307709997993568
     LoadNewRawSatelliteImageRequestBody:
       type: object
       properties:
         file_name:
           type: string
           description: File name of the raw image
-          example: Facilis saepe blanditiis aut id ullam itaque.
+          example: Sunt porro.
         id:
           type: string
           description: The image identifier
-          example: Similique modi aut aperiam voluptas culpa dolores.
+          example: Id ullam itaque rem nihil.
       example:
-        file_name: Porro quod omnis quisquam quos autem.
-        id: Nihil ducimus.
+        file_name: Et provident totam velit.
+        id: Omnis quisquam quos.
     NormalizedIndexes:
       type: object
       properties:

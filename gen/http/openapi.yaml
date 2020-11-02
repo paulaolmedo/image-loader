@@ -133,16 +133,20 @@ definitions:
         type: object
         description: Coordinates of the satellite image
         example:
-          Omnis omnis quasi necessitatibus.: 0.6163929175677805
+          Corporis autem omnis amet nemo ut.: 0.8799015965306857
+          Eos qui mollitia explicabo est corporis officia.: 0.5350298753548278
+          Est harum.: 0.4641900032676375
         additionalProperties: true
       tag_name:
         type: string
         description: Non-forgetable identifier
-        example: Nemo ut assumenda perferendis est harum.
+        example: Consectetur numquam et.
     example:
       coordinates:
+        Alias modi molestiae dolorem quas numquam.: 0.0298195161420244
         Facere qui dolores quia iusto sint.: 0.006707504438042929
-      tag_name: Alias modi molestiae dolorem quas numquam.
+        Odit suscipit mollitia.: 0.01823829152404492
+      tag_name: Omnis omnis quasi necessitatibus.
   NormalizedIndexesRequestBody:
     title: NormalizedIndexesRequestBody
     type: object
@@ -151,32 +155,36 @@ definitions:
         type: array
         items:
           type: number
-          example: 0.4376500901841957
+          example: 0.24579687160203864
           format: double
         description: Normalized difference vegetation index
         example:
-        - 0.2484626358366304
-        - 0.18745658491395728
+        - 0.8639196191267979
+        - 0.62920999890917
+        - 0.8163837062280556
       ndwi:
         type: array
         items:
           type: number
-          example: 0.5592610830362001
+          example: 0.4820876163670806
           format: double
         description: Normalized difference water index
         example:
-        - 0.4119254190513769
-        - 0.8639196191267979
-        - 0.62920999890917
+        - 0.6377983805667723
+        - 0.3906738630499499
+        - 0.1828987573968838
+        - 0.0401356398891894
     example:
       ndvi:
-      - 0.4820876163670806
-      - 0.47616026717394694
-      - 0.6377983805667723
+      - 0.9699480294321668
+      - 0.012781916079448325
+      - 0.9404237273206197
+      - 0.7162157000100869
       ndwi:
-      - 0.1828987573968838
-      - 0.0401356398891894
-      - 0.6971322235548086
+      - 0.9092582679146045
+      - 0.3989343481767013
+      - 0.6383522880150814
+      - 0.5228368161155966
   ProcessedImagesGetProcessedSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -184,7 +192,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -207,11 +215,11 @@ definitions:
         example: false
     description: Get processed satellite image_BadRequest_Response_Body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: false
     required:
     - name
@@ -243,18 +251,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Get processed satellite image_InternalError_Response_Body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -270,9 +278,9 @@ definitions:
       file_name:
         type: string
         description: File name of the processed image
-        example: Enim quia doloremque nulla.
+        example: Modi aut.
     example:
-      file_name: Accusantium iusto in reprehenderit quae aut.
+      file_name: Voluptas culpa dolores debitis facilis saepe blanditiis.
   ProcessedImagesGetProcessedSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -280,15 +288,15 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Id dolorum.
+        example: Sint facilis eius omnis alias fuga.
       description:
         type: string
         description: The operation description
-        example: Qui et nemo sint facilis.
+        example: Quidem sint dolores neque ut corrupti.
     description: Get Processed Satellite ImageResponseBody result type (default view)
     example:
-      code: Omnis alias.
-      description: Ea quidem sint dolores neque ut corrupti.
+      code: Voluptatum ex atque consequatur possimus sit consequuntur.
+      description: Voluptatem et ut quas.
   ProcessedImagesLoadNewProcessedSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -323,8 +331,8 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: false
+      temporary: false
+      timeout: true
     required:
     - name
     - id
@@ -355,18 +363,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: true
     description: Load new processed satellite image_InternalError_Response_Body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: true
     required:
     - name
@@ -382,39 +390,32 @@ definitions:
       date_time:
         type: string
         description: When was the image taken
-        example: "1974-03-04T19:57:34Z"
+        example: "1993-12-27T08:53:05Z"
         format: date-time
       file_name:
         type: string
         description: File name of the processed image
-        example: Est corporis autem omnis.
+        example: Error occaecati qui voluptatem voluptas.
       geographic_information:
         $ref: '#/definitions/GeographicInformationRequestBody'
-      id:
-        type: string
-        description: The image identifier
-        example: Eos qui mollitia explicabo est corporis officia.
       normalized_indexes:
         $ref: '#/definitions/NormalizedIndexesRequestBody'
     example:
-      date_time: "1994-09-11T21:53:24Z"
-      file_name: Qui qui.
+      date_time: "1984-04-22T18:23:34Z"
+      file_name: Officiis perferendis earum.
       geographic_information:
         coordinates:
-          Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
-          Molestiae sed molestias praesentium rerum.: 0.3908551358201754
-          Qui qui iusto praesentium.: 0.19181675265671314
-        tag_name: Incidunt odit tempore.
-      id: Assumenda temporibus.
+          Dolores aut reprehenderit tempore nesciunt.: 0.08537234062709087
+          Incidunt odit tempore.: 0.4612094935047014
+        tag_name: Ut qui.
       normalized_indexes:
         ndvi:
-        - 0.6127802172492277
-        - 0.004560762359582058
-        - 0.480367361557016
+        - 0.3904972148805288
+        - 0.6699739812364446
+        - 0.027588443100172985
         ndwi:
-        - 0.08253636129242008
-        - 0.030755381445945546
-        - 0.659276994468877
+        - 0.508680136375543
+        - 0.9307709997993568
   ProcessedImagesLoadNewProcessedSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -422,15 +423,15 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Dolorem laborum illum facere autem.
+        example: Unde iure.
       description:
         type: string
         description: The operation description
-        example: Corrupti eligendi animi id tempora voluptatem recusandae.
+        example: At doloremque voluptatem repellat et.
     description: Load New Processed Satellite ImageResponseBody result type (default view)
     example:
-      code: Quod incidunt laboriosam est aliquam ratione impedit.
-      description: Magni maxime.
+      code: Dolorem laborum illum facere autem.
+      description: Corrupti eligendi animi id tempora voluptatem recusandae.
   RawImagesGetRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -438,7 +439,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -465,7 +466,7 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: true
     required:
     - name
@@ -509,7 +510,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -524,9 +525,9 @@ definitions:
       file_name:
         type: string
         description: File name of the raw image
-        example: Nostrum at.
+        example: Dignissimos accusamus aut.
     example:
-      file_name: Voluptatem repellat et.
+      file_name: Consectetur neque voluptas laudantium facere qui.
   RawImagesGetRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -534,15 +535,15 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Et sed cumque accusamus maiores.
+        example: Maxime rerum fugiat atque.
       description:
         type: string
         description: The operation description
-        example: Omnis velit et dolores.
+        example: Sit eum rerum dolores ullam aliquid.
     description: Get Raw Satellite ImageResponseBody result type (default view)
     example:
-      code: Officiis ut non voluptates.
-      description: Quis pariatur.
+      code: Laborum aliquid autem.
+      description: Et sed cumque accusamus maiores.
   RawImagesLoadNewRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -566,19 +567,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: Load new raw satellite image_BadRequest_Response_Body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: false
+      temporary: true
+      timeout: true
     required:
     - name
     - id
@@ -609,19 +610,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: true
     description: Load new raw satellite image_InternalError_Response_Body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -636,14 +637,14 @@ definitions:
       file_name:
         type: string
         description: File name of the raw image
-        example: Fugiat atque voluptates sit eum rerum.
+        example: Dicta quo explicabo ullam molestias.
       id:
         type: string
         description: The image identifier
-        example: Fuga maxime.
+        example: Et quod sit.
     example:
-      file_name: Laborum aliquid autem.
-      id: Ullam aliquid.
+      file_name: Corporis laboriosam deserunt aliquid incidunt.
+      id: Ratione voluptates libero tenetur sunt necessitatibus.
   RawImagesLoadNewRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -651,12 +652,12 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Ut ut perferendis.
+        example: Dolore impedit perferendis et ea.
       description:
         type: string
         description: The operation description
-        example: Culpa harum in modi.
+        example: Facere rerum similique repudiandae beatae.
     description: Load New Raw Satellite ImageResponseBody result type (default view)
     example:
-      code: Et quod sit.
-      description: Dicta quo explicabo ullam molestias.
+      code: Deleniti at fuga.
+      description: Numquam aut.

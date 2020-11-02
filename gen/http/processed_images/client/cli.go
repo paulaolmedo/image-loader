@@ -21,11 +21,10 @@ func BuildLoadNewProcessedSatelliteImagePayload(processedImagesLoadNewProcessedS
 	{
 		err = json.Unmarshal([]byte(processedImagesLoadNewProcessedSatelliteImageBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"date_time\": \"2008-09-18T10:35:05Z\",\n      \"file_name\": \"Reprehenderit tempore nesciunt aut.\",\n      \"geographic_information\": {\n         \"coordinates\": {\n            \"Ex exercitationem aut reiciendis quod voluptate incidunt.\": 0.7392343776263494,\n            \"Molestiae sed molestias praesentium rerum.\": 0.3908551358201754,\n            \"Qui qui iusto praesentium.\": 0.19181675265671314\n         },\n         \"tag_name\": \"Incidunt odit tempore.\"\n      },\n      \"id\": \"Sunt occaecati ut qui libero similique dolores.\",\n      \"normalized_indexes\": {\n         \"ndvi\": [\n            0.6127802172492277,\n            0.004560762359582058,\n            0.480367361557016\n         ],\n         \"ndwi\": [\n            0.08253636129242008,\n            0.030755381445945546,\n            0.659276994468877\n         ]\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"date_time\": \"2012-04-04T19:21:12Z\",\n      \"file_name\": \"Sunt aliquam totam dolores aut voluptatem sunt.\",\n      \"geographic_information\": {\n         \"coordinates\": {\n            \"Dolores aut reprehenderit tempore nesciunt.\": 0.08537234062709087,\n            \"Incidunt odit tempore.\": 0.4612094935047014\n         },\n         \"tag_name\": \"Ut qui.\"\n      },\n      \"normalized_indexes\": {\n         \"ndvi\": [\n            0.3904972148805288,\n            0.6699739812364446,\n            0.027588443100172985\n         ],\n         \"ndwi\": [\n            0.508680136375543,\n            0.9307709997993568\n         ]\n      }\n   }'")
 		}
 	}
 	v := &processedimages.ProcessedSatelliteImage{
-		ID:       body.ID,
 		FileName: body.FileName,
 		DateTime: body.DateTime,
 	}
@@ -47,7 +46,7 @@ func BuildGetProcessedSatelliteImagePayload(processedImagesGetProcessedSatellite
 	{
 		err = json.Unmarshal([]byte(processedImagesGetProcessedSatelliteImageBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Dolore impedit perferendis et ea.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"file_name\": \"Voluptatem nihil.\"\n   }'")
 		}
 	}
 	v := &processedimages.GetProcessedSatelliteImagePayload{

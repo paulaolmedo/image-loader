@@ -25,9 +25,6 @@ var RawSatelliteImage = Type("RawSatelliteImage", func() {
 
 //ProcessedSatelliteImage Information (not raw, clearly)
 var ProcessedSatelliteImage = Type("ProcessedSatelliteImage", func() {
-	Attribute("id", String, "The image identifier", func() {
-		Meta("struct:tag:bson", "_id")
-	})
 	Attribute("file_name", String, "File name of the processed image")
 	Attribute("geographic_information", GeographicInformation)
 	Attribute("date_time", String, "When was the image taken", func() {

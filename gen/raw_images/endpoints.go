@@ -15,17 +15,15 @@ import (
 
 // Endpoints wraps the "Raw images" service endpoints.
 type Endpoints struct {
-	LoadNewRawSatelliteImage       goa.Endpoint
-	GetRawSatelliteImage           goa.Endpoint
-	LoadNewProcessedSatelliteImage goa.Endpoint
+	LoadNewRawSatelliteImage goa.Endpoint
+	GetRawSatelliteImage     goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "Raw images" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		LoadNewRawSatelliteImage:       NewLoadNewRawSatelliteImageEndpoint(s),
-		GetRawSatelliteImage:           NewGetRawSatelliteImageEndpoint(s),
-		LoadNewProcessedSatelliteImage: NewLoadNewProcessedSatelliteImageEndpoint(s),
+		LoadNewRawSatelliteImage: NewLoadNewRawSatelliteImageEndpoint(s),
+		GetRawSatelliteImage:     NewGetRawSatelliteImageEndpoint(s),
 	}
 }
 
@@ -33,7 +31,6 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.LoadNewRawSatelliteImage = m(e.LoadNewRawSatelliteImage)
 	e.GetRawSatelliteImage = m(e.GetRawSatelliteImage)
-	e.LoadNewProcessedSatelliteImage = m(e.LoadNewProcessedSatelliteImage)
 }
 
 // NewLoadNewRawSatelliteImageEndpoint returns an endpoint function that calls
@@ -61,15 +58,5 @@ func NewGetRawSatelliteImageEndpoint(s Service) goa.Endpoint {
 		}
 		vres := NewViewedGoaResult(res, "default")
 		return vres, nil
-	}
-}
-
-// NewLoadNewProcessedSatelliteImageEndpoint returns an endpoint function that
-// calls the method "Load new processed satellite image" of service "Raw
-// images".
-func NewLoadNewProcessedSatelliteImageEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ProcessedSatelliteImage)
-		return nil, s.LoadNewProcessedSatelliteImage(ctx, p)
 	}
 }

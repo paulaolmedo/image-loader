@@ -10,6 +10,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	processedimagesc "image-loader/gen/http/processed_images/client"
 	rawimagesc "image-loader/gen/http/raw_images/client"
 	"net/http"
 	"os"
@@ -23,15 +24,41 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `raw- images (load- new- raw- satellite- image|get- raw- satellite- image|load- new- processed- satellite- image)
+	return `raw- images (load- new- raw- satellite- image|get- raw- satellite- image)
+processed- images (load- new- processed- satellite- image|get- processed- satellite- image)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` raw- images load- new- raw- satellite- image --body '{
-      "file_name": "Voluptates architecto.",
-      "id": "Consequuntur non placeat ab."
+      "file_name": "Animi exercitationem architecto eum laborum dolor.",
+      "id": "Voluptates architecto."
+   }'` + "\n" +
+		os.Args[0] + ` processed- images load- new- processed- satellite- image --body '{
+      "date_time": "2008-09-18T10:35:05Z",
+      "file_name": "Reprehenderit tempore nesciunt aut.",
+      "geographic_information": {
+         "coordinates": {
+            "Ex exercitationem aut reiciendis quod voluptate incidunt.": 0.7392343776263494,
+            "Molestiae sed molestias praesentium rerum.": 0.3908551358201754,
+            "Qui qui iusto praesentium.": 0.19181675265671314
+         },
+         "tag_name": "Incidunt odit tempore."
+      },
+      "id": "Sunt occaecati ut qui libero similique dolores.",
+      "normalized_indexes": {
+         "ndvi": [
+            0.6127802172492277,
+            0.004560762359582058,
+            0.480367361557016
+         ],
+         "ndwi": [
+            0.08253636129242008,
+            0.030755381445945546,
+            0.659276994468877
+         ]
+      }
    }'` + "\n" +
 		""
 }
@@ -54,13 +81,21 @@ func ParseEndpoint(
 		rawImagesGetRawSatelliteImageFlags    = flag.NewFlagSet("get- raw- satellite- image", flag.ExitOnError)
 		rawImagesGetRawSatelliteImageBodyFlag = rawImagesGetRawSatelliteImageFlags.String("body", "REQUIRED", "")
 
-		rawImagesLoadNewProcessedSatelliteImageFlags    = flag.NewFlagSet("load- new- processed- satellite- image", flag.ExitOnError)
-		rawImagesLoadNewProcessedSatelliteImageBodyFlag = rawImagesLoadNewProcessedSatelliteImageFlags.String("body", "REQUIRED", "")
+		processedImagesFlags = flag.NewFlagSet("processed- images", flag.ContinueOnError)
+
+		processedImagesLoadNewProcessedSatelliteImageFlags    = flag.NewFlagSet("load- new- processed- satellite- image", flag.ExitOnError)
+		processedImagesLoadNewProcessedSatelliteImageBodyFlag = processedImagesLoadNewProcessedSatelliteImageFlags.String("body", "REQUIRED", "")
+
+		processedImagesGetProcessedSatelliteImageFlags    = flag.NewFlagSet("get- processed- satellite- image", flag.ExitOnError)
+		processedImagesGetProcessedSatelliteImageBodyFlag = processedImagesGetProcessedSatelliteImageFlags.String("body", "REQUIRED", "")
 	)
 	rawImagesFlags.Usage = rawImagesUsage
 	rawImagesLoadNewRawSatelliteImageFlags.Usage = rawImagesLoadNewRawSatelliteImageUsage
 	rawImagesGetRawSatelliteImageFlags.Usage = rawImagesGetRawSatelliteImageUsage
-	rawImagesLoadNewProcessedSatelliteImageFlags.Usage = rawImagesLoadNewProcessedSatelliteImageUsage
+
+	processedImagesFlags.Usage = processedImagesUsage
+	processedImagesLoadNewProcessedSatelliteImageFlags.Usage = processedImagesLoadNewProcessedSatelliteImageUsage
+	processedImagesGetProcessedSatelliteImageFlags.Usage = processedImagesGetProcessedSatelliteImageUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -79,6 +114,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "raw- images":
 			svcf = rawImagesFlags
+		case "processed- images":
+			svcf = processedImagesFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -102,8 +139,15 @@ func ParseEndpoint(
 			case "get- raw- satellite- image":
 				epf = rawImagesGetRawSatelliteImageFlags
 
+			}
+
+		case "processed- images":
+			switch epn {
 			case "load- new- processed- satellite- image":
-				epf = rawImagesLoadNewProcessedSatelliteImageFlags
+				epf = processedImagesLoadNewProcessedSatelliteImageFlags
+
+			case "get- processed- satellite- image":
+				epf = processedImagesGetProcessedSatelliteImageFlags
 
 			}
 
@@ -136,9 +180,16 @@ func ParseEndpoint(
 			case "get- raw- satellite- image":
 				endpoint = c.GetRawSatelliteImage()
 				data, err = rawimagesc.BuildGetRawSatelliteImagePayload(*rawImagesGetRawSatelliteImageBodyFlag)
+			}
+		case "processed- images":
+			c := processedimagesc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
 			case "load- new- processed- satellite- image":
 				endpoint = c.LoadNewProcessedSatelliteImage()
-				data, err = rawimagesc.BuildLoadNewProcessedSatelliteImagePayload(*rawImagesLoadNewProcessedSatelliteImageBodyFlag)
+				data, err = processedimagesc.BuildLoadNewProcessedSatelliteImagePayload(*processedImagesLoadNewProcessedSatelliteImageBodyFlag)
+			case "get- processed- satellite- image":
+				endpoint = c.GetProcessedSatelliteImage()
+				data, err = processedimagesc.BuildGetProcessedSatelliteImagePayload(*processedImagesGetProcessedSatelliteImageBodyFlag)
 			}
 		}
 	}
@@ -159,7 +210,6 @@ Usage:
 COMMAND:
     load- new- raw- satellite- image: loads a new image into the database
     get- raw- satellite- image: get a raw image from the database
-    load- new- processed- satellite- image: loads a new image into the database
 
 Additional help:
     %s raw- images COMMAND --help
@@ -173,8 +223,8 @@ loads a new image into the database
 
 Example:
     `+os.Args[0]+` raw- images load- new- raw- satellite- image --body '{
-      "file_name": "Voluptates architecto.",
-      "id": "Consequuntur non placeat ab."
+      "file_name": "Animi exercitationem architecto eum laborum dolor.",
+      "id": "Voluptates architecto."
    }'
 `, os.Args[0])
 }
@@ -187,19 +237,34 @@ get a raw image from the database
 
 Example:
     `+os.Args[0]+` raw- images get- raw- satellite- image --body '{
-      "file_name": "Quia quos eos ut unde sed dolorum."
+      "file_name": "Unde sed dolorum."
    }'
 `, os.Args[0])
 }
 
-func rawImagesLoadNewProcessedSatelliteImageUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] raw- images load- new- processed- satellite- image -body JSON
+// processed- imagesUsage displays the usage of the processed- images command
+// and its subcommands.
+func processedImagesUsage() {
+	fmt.Fprintf(os.Stderr, `Service is the Processed images service interface.
+Usage:
+    %s [globalflags] processed- images COMMAND [flags]
 
-loads a new image into the database
+COMMAND:
+    load- new- processed- satellite- image: loads a new processed image into the database
+    get- processed- satellite- image: get a processed image from the database
+
+Additional help:
+    %s processed- images COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func processedImagesLoadNewProcessedSatelliteImageUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] processed- images load- new- processed- satellite- image -body JSON
+
+loads a new processed image into the database
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` raw- images load- new- processed- satellite- image --body '{
+    `+os.Args[0]+` processed- images load- new- processed- satellite- image --body '{
       "date_time": "2008-09-18T10:35:05Z",
       "file_name": "Reprehenderit tempore nesciunt aut.",
       "geographic_information": {
@@ -223,6 +288,19 @@ Example:
             0.659276994468877
          ]
       }
+   }'
+`, os.Args[0])
+}
+
+func processedImagesGetProcessedSatelliteImageUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] processed- images get- processed- satellite- image -body JSON
+
+get a processed image from the database
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` processed- images get- processed- satellite- image --body '{
+      "file_name": "Dolore impedit perferendis et ea."
    }'
 `, os.Args[0])
 }

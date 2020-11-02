@@ -7,6 +7,124 @@ servers:
 - url: http://localhost:80
   description: Default server for Satellite Image Loader API
 paths:
+  /image-loader/api/v1/processed-images:
+    get:
+      tags:
+      - Processed images
+      summary: Get processed satellite image Processed images
+      description: get a processed image from the database
+      operationId: Processed images#Get processed satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
+            example:
+              file_name: Dolore impedit perferendis et ea.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Facere rerum similique repudiandae beatae.
+                description: Deleniti at fuga.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: true
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+    post:
+      tags:
+      - Processed images
+      summary: Load new processed satellite image Processed images
+      description: loads a new processed image into the database
+      operationId: Processed images#Load new processed satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNewProcessedSatelliteImageRequestBody'
+            example:
+              date_time: "2008-09-18T10:35:05Z"
+              file_name: Reprehenderit tempore nesciunt aut.
+              geographic_information:
+                coordinates:
+                  Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
+                  Molestiae sed molestias praesentium rerum.: 0.3908551358201754
+                  Qui qui iusto praesentium.: 0.19181675265671314
+                tag_name: Incidunt odit tempore.
+              id: Sunt occaecati ut qui libero similique dolores.
+              normalized_indexes:
+                ndvi:
+                - 0.6127802172492277
+                - 0.004560762359582058
+                - 0.480367361557016
+                ndwi:
+                - 0.08253636129242008
+                - 0.030755381445945546
+                - 0.659276994468877
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Omnis molestiae et id.
+                description: Laudantium cumque.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: true
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
   /image-loader/api/v1/raw-images:
     get:
       tags:
@@ -21,7 +139,7 @@ paths:
             schema:
               $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
             example:
-              file_name: Quia quos eos ut unde sed dolorum.
+              file_name: Unde sed dolorum.
       responses:
         "200":
           description: ""
@@ -71,8 +189,8 @@ paths:
             schema:
               $ref: '#/components/schemas/LoadNewRawSatelliteImageRequestBody'
             example:
-              file_name: Voluptates architecto.
-              id: Consequuntur non placeat ab.
+              file_name: Animi exercitationem architecto eum laborum dolor.
+              id: Voluptates architecto.
       responses:
         "200":
           description: ""
@@ -81,8 +199,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/GoaResult'
               example:
-                code: Ut eos occaecati eligendi sapiente ut enim.
-                description: Eligendi ipsum ipsa.
+                code: Eligendi ipsum ipsa.
+                description: Temporibus sequi minus.
         "400":
           description: ""
           content:
@@ -90,71 +208,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
-  /image-loader/api/v1/raw-images/processed:
-    post:
-      tags:
-      - Raw images
-      summary: Load new processed satellite image Raw images
-      description: loads a new image into the database
-      operationId: Raw images#Load new processed satellite image
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoadNewProcessedSatelliteImageRequestBody'
-            example:
-              date_time: "2008-09-18T10:35:05Z"
-              file_name: Reprehenderit tempore nesciunt aut.
-              geographic_information:
-                coordinates:
-                  Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
-                  Molestiae sed molestias praesentium rerum.: 0.3908551358201754
-                  Qui qui iusto praesentium.: 0.19181675265671314
-                tag_name: Incidunt odit tempore.
-              id: Sunt occaecati ut qui libero similique dolores.
-              normalized_indexes:
-                ndvi:
-                - 0.6127802172492277
-                - 0.004560762359582058
-                - 0.480367361557016
-                ndwi:
-                - 0.08253636129242008
-                - 0.030755381445945546
-                - 0.659276994468877
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              example: {}
-        "400":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -167,12 +221,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
 components:
   schemas:
     Error:
@@ -181,7 +235,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of the problem.
@@ -207,8 +261,8 @@ components:
         id: 123abc
         message: parameter 'p' must be an integer
         name: bad_request
-        temporary: false
-        timeout: false
+        temporary: true
+        timeout: true
       required:
       - name
       - id
@@ -223,73 +277,71 @@ components:
           type: object
           description: Coordinates of the satellite image
           example:
-            Culpa dolores debitis facilis saepe blanditiis.: 0.4398902985737806
-            Modi aut.: 0.5865869017188681
-            Ullam itaque rem nihil ducimus.: 0.9531672097447323
+            Est illum recusandae odio.: 0.19835752019624622
+            Et autem et.: 0.08892882469281352
           additionalProperties: true
         tag_name:
           type: string
           description: Non-forgetable identifier
-          example: Accusantium iusto in reprehenderit quae aut.
+          example: Aut veritatis cum placeat.
       example:
         coordinates:
-          Et provident totam velit.: 0.6265644306664542
-          Perferendis molestias molestiae eos.: 0.6094055122873676
-          Voluptas mollitia minima ipsum magnam tempora.: 0.06424249512309911
-        tag_name: Quod omnis quisquam.
+          Qui id.: 0.7188540978805499
+          Rerum sed architecto nemo.: 0.025004774606587746
+        tag_name: Nulla non id et.
     GetRawSatelliteImageRequestBody:
       type: object
       properties:
         file_name:
           type: string
           description: File name of the raw image
-          example: Corrupti explicabo voluptatum ex.
+          example: Voluptatem inventore quia et sequi.
       example:
-        file_name: Consequatur possimus.
+        file_name: Enim reprehenderit.
     GoaResult:
       type: object
       properties:
         code:
           type: string
           description: The operation code
-          example: Sunt sunt.
+          example: Provident totam velit non voluptates voluptas mollitia.
         description:
           type: string
           description: The operation description
-          example: Voluptatibus quisquam laudantium cumque hic.
+          example: Ipsum magnam.
       example:
-        code: Quo id dolorum minima qui.
-        description: Nemo sint facilis eius omnis alias.
+        code: Ab magnam perferendis molestias.
+        description: Eos mollitia ea maxime fugiat atque.
     LoadNewProcessedSatelliteImageRequestBody:
       type: object
       properties:
         date_time:
           type: string
           description: When was the image taken
-          example: "2003-11-25T02:00:19Z"
+          example: "1987-05-21T20:57:38Z"
           format: date-time
         file_name:
           type: string
           description: File name of the processed image
-          example: Enim quia doloremque nulla.
+          example: Est ducimus omnis consequatur.
         geographic_information:
           $ref: '#/components/schemas/GeographicInformation'
         id:
           type: string
           description: The image identifier
-          example: Consequuntur minus voluptatem et ut.
+          example: Aut ratione commodi ab sed et ut.
         normalized_indexes:
           $ref: '#/components/schemas/NormalizedIndexes'
       example:
-        date_time: "2006-09-27T17:41:25Z"
-        file_name: Impedit dolores iste et et.
+        date_time: "1975-08-14T07:10:53Z"
+        file_name: Possimus harum aut molestiae.
         geographic_information:
           coordinates:
             Ex exercitationem aut reiciendis quod voluptate incidunt.: 0.7392343776263494
             Molestiae sed molestias praesentium rerum.: 0.3908551358201754
             Qui qui iusto praesentium.: 0.19181675265671314
           tag_name: Incidunt odit tempore.
-        id: Nemo maiores tenetur voluptatem dolore.
+        id: Facere delectus sit.
         normalized_indexes:
           ndvi:
           - 0.6127802172492277
@@ -305,14 +357,14 @@ components:
         file_name:
           type: string
           description: File name of the raw image
-          example: Sapiente voluptatum repellendus maxime voluptatem error.
+          example: Facilis saepe blanditiis aut id ullam itaque.
         id:
           type: string
           description: The image identifier
-          example: Eligendi excepturi aliquid nemo.
+          example: Similique modi aut aperiam voluptas culpa dolores.
       example:
-        file_name: Voluptatum impedit ducimus sequi sed.
-        id: Voluptatum numquam voluptatem.
+        file_name: Porro quod omnis quisquam quos autem.
+        id: Nihil ducimus.
     NormalizedIndexes:
       type: object
       properties:
@@ -320,30 +372,30 @@ components:
           type: array
           items:
             type: number
-            example: 0.11220735881259836
+            example: 0.49827176866111955
             format: double
           description: Normalized difference vegetation index
           example:
-          - 0.532882137886902
-          - 0.06608277721520363
+          - 0.4153704159999303
+          - 0.9897261400757769
+          - 0.6836162412666904
         ndwi:
           type: array
           items:
             type: number
-            example: 0.19835752019624622
+            example: 0.6024488630297181
             format: double
           description: Normalized difference water index
           example:
-          - 0.039887244866758154
-          - 0.6883018275285391
-          - 0.3154289468512323
-          - 0.8542093708386505
+          - 0.6373493752398844
+          - 0.13152190185405616
       example:
         ndvi:
-        - 0.8917878637736515
-        - 0.37381041021893197
-        - 0.8252758370390869
+        - 0.904111819495114
+        - 0.3269625674826508
+        - 0.9908806910906924
         ndwi:
-        - 0.9737764394796617
-        - 0.2520012684284545
-        - 0.4102395363451464
+        - 0.9275947288291565
+        - 0.3449628658251033
+        - 0.9017560468551464
+        - 0.23499740614264106

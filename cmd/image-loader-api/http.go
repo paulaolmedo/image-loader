@@ -4,6 +4,8 @@ import (
 	"context"
 	rawimagessrv "image-loader/gen/http/raw_images/server"
 	raw_images "image-loader/gen/raw_images"
+	processedimagessrv "image-loader/gen/http/processed_images/server"
+	processed_images "image-loader/gen/processed_images"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,7 +20,10 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *raw_images.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, 
+					  imagesEndpoints *raw_images.Endpoints,
+					  processedImagesEndpoints *processed_images.Endpoints,
+					  wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -50,13 +55,16 @@ func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *raw_imag
 	// responses.
 	var (
 		imagesServer *rawimagessrv.Server
+		processedImagesServer * processedimagessrv.Server
 	)
 	{
 		eh := errorHandler(logger)
 		imagesServer = rawimagessrv.New(imagesEndpoints, mux, dec, enc, eh, nil)
+		processedImagesServer = processedimagessrv.New(processedImagesEndpoints, mux, dec, enc, eh, nil)
 	}
 	// Configure the mux.
 	rawimagessrv.Mount(mux, imagesServer)
+	processedimagessrv.Mount(mux, processedImagesServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -73,6 +81,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, imagesEndpoints *raw_imag
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
 	for _, m := range imagesServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range processedImagesServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 

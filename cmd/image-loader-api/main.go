@@ -5,6 +5,7 @@ import (
 	"fmt"
 	imageLoaderAPI "image-loader"
 	raw_images "image-loader/gen/raw_images"
+	processed_images "image-loader/gen/processed_images"
 	"image-loader/mongo"
 	"log"
 	"net/url"
@@ -82,9 +83,11 @@ func main() {
 	// Initialize the services.
 	var (
 		imagesSrv raw_images.Service
+		processedImagesSrv processed_images.Service
 	)
 	{
 		imagesSrv = imageLoaderAPI.NewImageLoader(logger, imageDao)
+		processedImagesSrv = imageLoaderAPI.NewProcessedImageLoader(logger, imageDao)
 
 	}
 
@@ -92,9 +95,11 @@ func main() {
 	// potentially running in different processes.
 	var (
 		imagesEndpoints *raw_images.Endpoints
+		processedimagesEndpoints *processed_images.Endpoints
 	)
 	{
 		imagesEndpoints = raw_images.NewEndpoints(imagesSrv)
+		processedimagesEndpoints = processed_images.NewEndpoints(processedImagesSrv)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -132,7 +137,7 @@ func main() {
 	} else if u.Port() == "" {
 		u.Host += ":80"
 	}
-	handleHTTPServer(ctx, u, imagesEndpoints, &wg, errc, logger, *dbgF)
+	handleHTTPServer(ctx, u, imagesEndpoints, processedimagesEndpoints, &wg, errc, logger, *dbgF)
 
 	// Wait for signal.
 	logger.Printf("exiting (%v)", <-errc)

@@ -63,7 +63,3 @@ func (s *imagesrvc) GetRawSatelliteImage(ctx context.Context, payload *raw_image
 	result = &raw_images.GoaResult{Code: &code, Description: &description}
 	return result, nil
 }
-
-func (s *imagesrvc) LoadNewProcessedSatelliteImage(ctx context.Context, payload *raw_images.ProcessedSatelliteImage) (err error) {
-	return nil
-}

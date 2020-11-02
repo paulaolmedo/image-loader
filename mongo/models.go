@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	raw_images "image-loader/gen/raw_images"
+	processed_images "image-loader/gen/processed_images"
 	"time"
 )
 
@@ -31,8 +31,8 @@ type RawSatelliteImageDetails struct {
 
 //ProcessedSatelliteImageDetails represents the satellite image already processed by the python service
 type ProcessedSatelliteImageDetails struct {
-	ID                           string    `bson:"_id"`
-	dateTime                     time.Time `bson:"date_time"`
-	raw_images.GeographicInformation `bson:"geographic_information"`
-	raw_images.NormalizedIndexes     `bson:"normalized_indexes"`
+	ID                                     string    `bson:"_id"`
+	dateTime                               time.Time `bson:"date_time"`
+	processed_images.GeographicInformation `bson:"geographic_information"`
+	processed_images.NormalizedIndexes     `bson:"normalized_indexes"`
 }

@@ -15,17 +15,15 @@ import (
 
 // Client is the "Raw images" service client.
 type Client struct {
-	LoadNewRawSatelliteImageEndpoint       goa.Endpoint
-	GetRawSatelliteImageEndpoint           goa.Endpoint
-	LoadNewProcessedSatelliteImageEndpoint goa.Endpoint
+	LoadNewRawSatelliteImageEndpoint goa.Endpoint
+	GetRawSatelliteImageEndpoint     goa.Endpoint
 }
 
 // NewClient initializes a "Raw images" service client given the endpoints.
-func NewClient(loadNewRawSatelliteImage, getRawSatelliteImage, loadNewProcessedSatelliteImage goa.Endpoint) *Client {
+func NewClient(loadNewRawSatelliteImage, getRawSatelliteImage goa.Endpoint) *Client {
 	return &Client{
-		LoadNewRawSatelliteImageEndpoint:       loadNewRawSatelliteImage,
-		GetRawSatelliteImageEndpoint:           getRawSatelliteImage,
-		LoadNewProcessedSatelliteImageEndpoint: loadNewProcessedSatelliteImage,
+		LoadNewRawSatelliteImageEndpoint: loadNewRawSatelliteImage,
+		GetRawSatelliteImageEndpoint:     getRawSatelliteImage,
 	}
 }
 
@@ -55,14 +53,4 @@ func (c *Client) GetRawSatelliteImage(ctx context.Context, p *GetRawSatelliteIma
 		return
 	}
 	return ires.(*GoaResult), nil
-}
-
-// LoadNewProcessedSatelliteImage calls the "Load new processed satellite
-// image" endpoint of the "Raw images" service.
-// LoadNewProcessedSatelliteImage may return the following errors:
-//	- "ErrorAddingImage" (type *goa.ServiceError)
-//	- error: internal error
-func (c *Client) LoadNewProcessedSatelliteImage(ctx context.Context, p *ProcessedSatelliteImage) (err error) {
-	_, err = c.LoadNewProcessedSatelliteImageEndpoint(ctx, p)
-	return
 }

@@ -16,8 +16,3 @@ func LoadNewRawSatelliteImageRawImagesPath() string {
 func GetRawSatelliteImageRawImagesPath() string {
 	return "/image-loader/api/v1/raw-images"
 }
-
-// LoadNewProcessedSatelliteImageRawImagesPath returns the URL path to the Raw images service Load new processed satellite image HTTP endpoint.
-func LoadNewProcessedSatelliteImageRawImagesPath() string {
-	return "/image-loader/api/v1/raw-images/processed"
-}

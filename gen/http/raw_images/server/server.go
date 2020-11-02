@@ -18,10 +18,9 @@ import (
 
 // Server lists the Raw images service endpoint HTTP handlers.
 type Server struct {
-	Mounts                         []*MountPoint
-	LoadNewRawSatelliteImage       http.Handler
-	GetRawSatelliteImage           http.Handler
-	LoadNewProcessedSatelliteImage http.Handler
+	Mounts                   []*MountPoint
+	LoadNewRawSatelliteImage http.Handler
+	GetRawSatelliteImage     http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -59,11 +58,9 @@ func New(
 		Mounts: []*MountPoint{
 			{"LoadNewRawSatelliteImage", "POST", "/image-loader/api/v1/raw-images"},
 			{"GetRawSatelliteImage", "GET", "/image-loader/api/v1/raw-images"},
-			{"LoadNewProcessedSatelliteImage", "POST", "/image-loader/api/v1/raw-images/processed"},
 		},
-		LoadNewRawSatelliteImage:       NewLoadNewRawSatelliteImageHandler(e.LoadNewRawSatelliteImage, mux, decoder, encoder, errhandler, formatter),
-		GetRawSatelliteImage:           NewGetRawSatelliteImageHandler(e.GetRawSatelliteImage, mux, decoder, encoder, errhandler, formatter),
-		LoadNewProcessedSatelliteImage: NewLoadNewProcessedSatelliteImageHandler(e.LoadNewProcessedSatelliteImage, mux, decoder, encoder, errhandler, formatter),
+		LoadNewRawSatelliteImage: NewLoadNewRawSatelliteImageHandler(e.LoadNewRawSatelliteImage, mux, decoder, encoder, errhandler, formatter),
+		GetRawSatelliteImage:     NewGetRawSatelliteImageHandler(e.GetRawSatelliteImage, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -74,14 +71,12 @@ func (s *Server) Service() string { return "Raw images" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.LoadNewRawSatelliteImage = m(s.LoadNewRawSatelliteImage)
 	s.GetRawSatelliteImage = m(s.GetRawSatelliteImage)
-	s.LoadNewProcessedSatelliteImage = m(s.LoadNewProcessedSatelliteImage)
 }
 
 // Mount configures the mux to serve the Raw images endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountLoadNewRawSatelliteImageHandler(mux, h.LoadNewRawSatelliteImage)
 	MountGetRawSatelliteImageHandler(mux, h.GetRawSatelliteImage)
-	MountLoadNewProcessedSatelliteImageHandler(mux, h.LoadNewProcessedSatelliteImage)
 }
 
 // MountLoadNewRawSatelliteImageHandler configures the mux to serve the "Raw
@@ -167,58 +162,6 @@ func NewGetRawSatelliteImageHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "Get raw satellite image")
-		ctx = context.WithValue(ctx, goa.ServiceKey, "Raw images")
-		payload, err := decodeRequest(r)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		res, err := endpoint(ctx, payload)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		if err := encodeResponse(ctx, w, res); err != nil {
-			errhandler(ctx, w, err)
-		}
-	})
-}
-
-// MountLoadNewProcessedSatelliteImageHandler configures the mux to serve the
-// "Raw images" service "Load new processed satellite image" endpoint.
-func MountLoadNewProcessedSatelliteImageHandler(mux goahttp.Muxer, h http.Handler) {
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
-	mux.Handle("POST", "/image-loader/api/v1/raw-images/processed", f)
-}
-
-// NewLoadNewProcessedSatelliteImageHandler creates a HTTP handler which loads
-// the HTTP request and calls the "Raw images" service "Load new processed
-// satellite image" endpoint.
-func NewLoadNewProcessedSatelliteImageHandler(
-	endpoint goa.Endpoint,
-	mux goahttp.Muxer,
-	decoder func(*http.Request) goahttp.Decoder,
-	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
-	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
-) http.Handler {
-	var (
-		decodeRequest  = DecodeLoadNewProcessedSatelliteImageRequest(mux, decoder)
-		encodeResponse = EncodeLoadNewProcessedSatelliteImageResponse(encoder)
-		encodeError    = EncodeLoadNewProcessedSatelliteImageError(encoder, formatter)
-	)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "Load new processed satellite image")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "Raw images")
 		payload, err := decodeRequest(r)
 		if err != nil {

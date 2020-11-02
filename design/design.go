@@ -96,15 +96,36 @@ var _ = Service("Raw images", func() {
 			Response("InternalError", StatusInternalServerError)
 		})
 	})
+})
+
+var _ = Service("Processed images", func() {
+	HTTP(func() {
+		Path("/processed-images")
+	})
+	Error("InternalError")
+	Error("BadRequest")
+	Error("NotFound")
 	Method("Load new processed satellite image", func() {
-		Description("loads a new image into the database")
+		Description("loads a new processed image into the database")
 		Payload(ProcessedSatelliteImage)
-		Result(func() {
-			Description("Image added")
-		})
+		Result(OperationResult)
 		Error("ErrorAddingImage")
 		HTTP(func() {
-			POST("/processed")
+			POST("/")
+			Response(StatusOK)
+			Response("BadRequest", StatusBadRequest)
+			Response("InternalError", StatusInternalServerError)
+		})
+	})
+	Method("Get processed satellite image", func() {
+		Description("get a processed image from the database")
+		Payload(func() {
+			Attribute("file_name", String, "File name of the processed image")
+		})
+		Result(OperationResult)
+		Error("ErrorGettingImage")
+		HTTP(func() {
+			GET("/")
 			Response(StatusOK)
 			Response("BadRequest", StatusBadRequest)
 			Response("InternalError", StatusInternalServerError)

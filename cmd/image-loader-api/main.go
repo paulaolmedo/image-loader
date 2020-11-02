@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	imageLoaderAPI "image-loader"
+	imageloaderapi "image-loader"
 	raw_images "image-loader/gen/raw_images"
 	processed_images "image-loader/gen/processed_images"
 	"image-loader/mongo"
@@ -86,8 +86,8 @@ func main() {
 		processedImagesSrv processed_images.Service
 	)
 	{
-		imagesSrv = imageLoaderAPI.NewImageLoader(logger, imageDao)
-		processedImagesSrv = imageLoaderAPI.NewProcessedImageLoader(logger, imageDao)
+		imagesSrv = imageloaderapi.NewImageLoader(logger, imageDao)
+		processedImagesSrv = imageloaderapi.NewProcessedImageLoader(logger, imageDao)
 
 	}
 

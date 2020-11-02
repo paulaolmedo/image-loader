@@ -1,4 +1,4 @@
-package imageLoaderAPI
+package imageloaderapi
 
 import (
 	"context"

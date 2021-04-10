@@ -1,0 +1,366 @@
+openapi: 3.0.3
+info:
+  title: Satellite Image Loader
+  description: Service to interact with satellite images on a database
+  version: "1.0"
+servers:
+- url: http://localhost:80
+  description: Default server for Satellite Image Loader API
+paths:
+  /image-loader/api/v1/processed-images:
+    get:
+      tags:
+      - Processed images
+      summary: Get processed satellite image Processed images
+      description: get a processed image from the database
+      operationId: Processed images#Get processed satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
+            example:
+              file_name: Quasi sequi.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Temporibus quidem aspernatur et.
+                description: Distinctio et voluptate.
+        "400":
+          description: Bad Request response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+    post:
+      tags:
+      - Processed images
+      summary: Load new processed satellite image Processed images
+      description: loads a new processed image into the database
+      operationId: Processed images#Load new processed satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNewProcessedSatelliteImageRequestBody'
+            example:
+              date_time: "1970-01-25T12:06:03Z"
+              file_name: Nobis quia quos eos.
+              geographic_information:
+                coordinates:
+                  Odit quibusdam numquam facilis.: 0.2603996896098972
+                tag_name: Unde sed dolorum.
+              normalized_indexes:
+                ndvi:
+                - 0.8597346016425331
+                - 0.3908551358201754
+                ndwi:
+                - 0.795787140008295
+                - 0.1907488332785942
+                - 0.6233789336290386
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Et dolor dicta sit corporis alias.
+                description: In eligendi magnam excepturi.
+        "400":
+          description: Bad Request response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+  /image-loader/api/v1/raw-images:
+    get:
+      tags:
+      - Raw images
+      summary: Get raw satellite image Raw images
+      description: get a raw image from the database
+      operationId: Raw images#Get raw satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetRawSatelliteImageRequestBody'
+            example:
+              file_name: Enim corrupti eligendi ipsum ipsa fugit.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Sequi minus vel.
+                description: Adipisci dolor.
+        "400":
+          description: Bad Request response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+    post:
+      tags:
+      - Raw images
+      summary: Load new raw satellite image Raw images
+      description: loads a new image into the database
+      operationId: Raw images#Load new raw satellite image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadNewRawSatelliteImageRequestBody'
+            example:
+              file_name: Ab fugiat voluptates architecto et.
+              id: Consectetur quis sint voluptatem optio consequuntur non.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoaResult'
+              example:
+                code: Ut ad.
+                description: Eos occaecati eligendi sapiente.
+        "400":
+          description: Bad Request response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        fault:
+          type: boolean
+          description: Is the error a server-side fault?
+          example: true
+        id:
+          type: string
+          description: ID is a unique identifier for this particular occurrence of
+            the problem.
+          example: 123abc
+        message:
+          type: string
+          description: Message is a human-readable explanation specific to this occurrence
+            of the problem.
+          example: parameter 'p' must be an integer
+        name:
+          type: string
+          description: Name is the name of this class of errors.
+          example: bad_request
+        temporary:
+          type: boolean
+          description: Is the error temporary?
+          example: true
+        timeout:
+          type: boolean
+          description: Is the error a timeout?
+          example: false
+      example:
+        id: 3F1FKVRR
+        message: Value of ID must be an integer
+        name: bad_request
+      required:
+      - name
+      - id
+      - message
+      - temporary
+      - timeout
+      - fault
+    GeographicInformation:
+      type: object
+      properties:
+        coordinates:
+          type: object
+          description: Coordinates of the satellite image
+          example:
+            Culpa dolores debitis facilis saepe blanditiis.: 0.4398902985737806
+            Modi aut.: 0.5865869017188681
+            Ullam itaque rem nihil ducimus.: 0.9531672097447323
+          additionalProperties: true
+        tag_name:
+          type: string
+          description: Non-forgetable identifier
+          example: Accusantium iusto in reprehenderit quae aut.
+      example:
+        coordinates:
+          Et provident totam velit.: 0.6265644306664542
+          Perferendis molestias molestiae eos.: 0.6094055122873676
+          Voluptas mollitia minima ipsum magnam tempora.: 0.06424249512309911
+        tag_name: Quod omnis quisquam.
+    GetRawSatelliteImageRequestBody:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: File name of the raw image
+          example: Consequatur possimus.
+      example:
+        file_name: Consequuntur minus voluptatem et ut.
+    GoaResult:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The operation code
+          example: Voluptatibus quisquam laudantium cumque hic.
+        description:
+          type: string
+          description: The operation description
+          example: Quo id dolorum minima qui.
+      example:
+        code: Nemo sint facilis eius omnis alias.
+        description: Ea quidem sint dolores neque ut corrupti.
+    LoadNewProcessedSatelliteImageRequestBody:
+      type: object
+      properties:
+        date_time:
+          type: string
+          description: When was the image taken
+          example: "2003-11-25T02:00:19Z"
+          format: date-time
+        file_name:
+          type: string
+          description: File name of the processed image
+          example: Enim quia doloremque nulla.
+        geographic_information:
+          $ref: '#/components/schemas/GeographicInformation'
+        normalized_indexes:
+          $ref: '#/components/schemas/NormalizedIndexes'
+      example:
+        date_time: "1989-09-16T06:52:42Z"
+        file_name: Nemo maiores tenetur voluptatem dolore.
+        geographic_information:
+          coordinates:
+            Odit quibusdam numquam facilis.: 0.2603996896098972
+          tag_name: Unde sed dolorum.
+        normalized_indexes:
+          ndvi:
+          - 0.8597346016425331
+          - 0.3908551358201754
+          ndwi:
+          - 0.795787140008295
+          - 0.1907488332785942
+          - 0.6233789336290386
+    LoadNewRawSatelliteImageRequestBody:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: File name of the raw image
+          example: Voluptatum numquam voluptatem.
+        id:
+          type: string
+          description: The image identifier
+          example: Sapiente voluptatum repellendus maxime voluptatem error.
+      example:
+        file_name: Sunt sunt.
+        id: Voluptatum impedit ducimus sequi sed.
+    NormalizedIndexes:
+      type: object
+      properties:
+        ndvi:
+          type: array
+          items:
+            type: number
+            example: 0.11220735881259836
+            format: double
+          description: Normalized difference vegetation index
+          example:
+          - 0.532882137886902
+          - 0.06608277721520363
+        ndwi:
+          type: array
+          items:
+            type: number
+            example: 0.19835752019624622
+            format: double
+          description: Normalized difference water index
+          example:
+          - 0.039887244866758154
+          - 0.6883018275285391
+          - 0.3154289468512323
+          - 0.8542093708386505
+      example:
+        ndvi:
+        - 0.8917878637736515
+        - 0.37381041021893197
+        - 0.8252758370390869
+        ndwi:
+        - 0.9737764394796617
+        - 0.2520012684284545
+        - 0.4102395363451464

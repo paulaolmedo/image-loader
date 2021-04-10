@@ -133,20 +133,17 @@ definitions:
         type: object
         description: Coordinates of the satellite image
         example:
-          Corporis autem omnis amet nemo ut.: 0.8799015965306857
-          Eos qui mollitia explicabo est corporis officia.: 0.5350298753548278
-          Est harum.: 0.4641900032676375
+          Consectetur neque voluptas laudantium facere qui.: 0.5407633478479563
         additionalProperties: true
       tag_name:
         type: string
         description: Non-forgetable identifier
-        example: Consectetur numquam et.
+        example: Voluptates quia quis pariatur dignissimos accusamus.
     example:
       coordinates:
-        Alias modi molestiae dolorem quas numquam.: 0.0298195161420244
-        Facere qui dolores quia iusto sint.: 0.006707504438042929
-        Odit suscipit mollitia.: 0.01823829152404492
-      tag_name: Omnis omnis quasi necessitatibus.
+        Corrupti eligendi animi id tempora voluptatem recusandae.: 0.9462702533951285
+        Repellat et quibusdam dolorem laborum illum facere.: 0.8051628829868708
+      tag_name: Iure nostrum at.
   NormalizedIndexesRequestBody:
     title: NormalizedIndexesRequestBody
     type: object
@@ -155,36 +152,35 @@ definitions:
         type: array
         items:
           type: number
-          example: 0.24579687160203864
+          example: 0.4829793571599281
           format: double
         description: Normalized difference vegetation index
         example:
-        - 0.8639196191267979
-        - 0.62920999890917
-        - 0.8163837062280556
+        - 0.3024443783180402
+        - 0.7312795389001255
+        - 0.6163929175677805
+        - 0.9724207682841894
       ndwi:
         type: array
         items:
           type: number
-          example: 0.4820876163670806
+          example: 0.4455579058050126
           format: double
         description: Normalized difference water index
         example:
-        - 0.6377983805667723
-        - 0.3906738630499499
-        - 0.1828987573968838
-        - 0.0401356398891894
+        - 0.7704927904571662
+        - 0.36783914645848154
+        - 0.10383089245017518
     example:
       ndvi:
-      - 0.9699480294321668
-      - 0.012781916079448325
-      - 0.9404237273206197
-      - 0.7162157000100869
+      - 0.0298195161420244
+      - 0.3041166133133455
+      - 0.5705172895335057
+      - 0.4945593433053344
       ndwi:
-      - 0.9092582679146045
-      - 0.3989343481767013
-      - 0.6383522880150814
-      - 0.5228368161155966
+      - 0.7318036581422381
+      - 0.38005335452941813
+      - 0.2932087381671572
   ProcessedImagesGetProcessedSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -192,14 +188,16 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -208,19 +206,20 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
-    description: Get processed satellite image_BadRequest_Response_Body result type (default view)
+        example: true
+    description: Get processed satellite image_BadRequest_Response_Body result type
+      (default view)
     example:
       fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: false
+      temporary: false
+      timeout: true
     required:
     - name
     - id
@@ -235,14 +234,16 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -256,14 +257,15 @@ definitions:
         type: boolean
         description: Is the error a timeout?
         example: true
-    description: Get processed satellite image_InternalError_Response_Body result type (default view)
+    description: Get processed satellite image_InternalError_Response_Body result
+      type (default view)
     example:
       fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: true
+      temporary: false
+      timeout: false
     required:
     - name
     - id
@@ -278,9 +280,9 @@ definitions:
       file_name:
         type: string
         description: File name of the processed image
-        example: Modi aut.
+        example: Illum qui aut ut.
     example:
-      file_name: Voluptas culpa dolores debitis facilis saepe blanditiis.
+      file_name: Excepturi aliquid nemo.
   ProcessedImagesGetProcessedSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -288,15 +290,15 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Sint facilis eius omnis alias fuga.
+        example: Eveniet quis.
       description:
         type: string
         description: The operation description
-        example: Quidem sint dolores neque ut corrupti.
+        example: Voluptatem voluptatem repellat delectus nostrum.
     description: Get Processed Satellite ImageResponseBody result type (default view)
     example:
-      code: Voluptatum ex atque consequatur possimus sit consequuntur.
-      description: Voluptatem et ut quas.
+      code: Aut soluta.
+      description: Assumenda temporibus.
   ProcessedImagesLoadNewProcessedSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -307,11 +309,13 @@ definitions:
         example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -324,14 +328,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
-    description: Load new processed satellite image_BadRequest_Response_Body result type (default view)
+        example: true
+    description: Load new processed satellite image_BadRequest_Response_Body result
+      type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -350,11 +355,13 @@ definitions:
         example: false
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -368,7 +375,8 @@ definitions:
         type: boolean
         description: Is the error a timeout?
         example: true
-    description: Load new processed satellite image_InternalError_Response_Body result type (default view)
+    description: Load new processed satellite image_InternalError_Response_Body result
+      type (default view)
     example:
       fault: true
       id: 123abc
@@ -390,32 +398,31 @@ definitions:
       date_time:
         type: string
         description: When was the image taken
-        example: "1993-12-27T08:53:05Z"
+        example: "1984-02-21T15:36:18Z"
         format: date-time
       file_name:
         type: string
         description: File name of the processed image
-        example: Error occaecati qui voluptatem voluptas.
+        example: Et dolores omnis officiis ut.
       geographic_information:
         $ref: '#/definitions/GeographicInformationRequestBody'
       normalized_indexes:
         $ref: '#/definitions/NormalizedIndexesRequestBody'
     example:
-      date_time: "1984-04-22T18:23:34Z"
-      file_name: Officiis perferendis earum.
+      date_time: "1993-12-27T08:53:05Z"
+      file_name: Qui odit suscipit mollitia.
       geographic_information:
         coordinates:
-          Dolores aut reprehenderit tempore nesciunt.: 0.08537234062709087
-          Incidunt odit tempore.: 0.4612094935047014
-        tag_name: Ut qui.
+          Odit quibusdam numquam facilis.: 0.2603996896098972
+        tag_name: Unde sed dolorum.
       normalized_indexes:
         ndvi:
-        - 0.3904972148805288
-        - 0.6699739812364446
-        - 0.027588443100172985
+        - 0.8597346016425331
+        - 0.3908551358201754
         ndwi:
-        - 0.508680136375543
-        - 0.9307709997993568
+        - 0.795787140008295
+        - 0.1907488332785942
+        - 0.6233789336290386
   ProcessedImagesLoadNewProcessedSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -423,15 +430,16 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Unde iure.
+        example: Tenetur sunt necessitatibus ipsam corporis laboriosam.
       description:
         type: string
         description: The operation description
-        example: At doloremque voluptatem repellat et.
-    description: Load New Processed Satellite ImageResponseBody result type (default view)
+        example: Aliquid incidunt.
+    description: Load New Processed Satellite ImageResponseBody result type (default
+      view)
     example:
-      code: Dolorem laborum illum facere autem.
-      description: Corrupti eligendi animi id tempora voluptatem recusandae.
+      code: Maxime rerum fugiat atque.
+      description: Sit eum rerum dolores ullam aliquid.
   RawImagesGetRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -442,11 +450,13 @@ definitions:
         example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -455,19 +465,20 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: true
-    description: Get raw satellite image_BadRequest_Response_Body result type (default view)
+    description: Get raw satellite image_BadRequest_Response_Body result type (default
+      view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -485,11 +496,13 @@ definitions:
         example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -498,19 +511,20 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: false
-    description: Get raw satellite image_InternalError_Response_Body result type (default view)
+    description: Get raw satellite image_InternalError_Response_Body result type (default
+      view)
     example:
       fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -525,9 +539,9 @@ definitions:
       file_name:
         type: string
         description: File name of the raw image
-        example: Dignissimos accusamus aut.
+        example: Quo explicabo.
     example:
-      file_name: Consectetur neque voluptas laudantium facere qui.
+      file_name: Molestias voluptatibus ratione voluptates.
   RawImagesGetRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -535,15 +549,15 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Maxime rerum fugiat atque.
+        example: Facere rerum similique repudiandae beatae.
       description:
         type: string
         description: The operation description
-        example: Sit eum rerum dolores ullam aliquid.
+        example: Deleniti at fuga.
     description: Get Raw Satellite ImageResponseBody result type (default view)
     example:
-      code: Laborum aliquid autem.
-      description: Et sed cumque accusamus maiores.
+      code: Numquam aut.
+      description: Cumque eveniet nisi ut.
   RawImagesLoadNewRawSatelliteImageBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -554,11 +568,13 @@ definitions:
         example: true
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -567,18 +583,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
-    description: Load new raw satellite image_BadRequest_Response_Body result type (default view)
+        example: true
+    description: Load new raw satellite image_BadRequest_Response_Body result type
+      (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: true
     required:
     - name
@@ -597,11 +614,13 @@ definitions:
         example: false
       id:
         type: string
-        description: ID is a unique identifier for this particular occurrence of the problem.
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
         example: 123abc
       message:
         type: string
-        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
         example: parameter 'p' must be an integer
       name:
         type: string
@@ -614,10 +633,11 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
-    description: Load new raw satellite image_InternalError_Response_Body result type (default view)
+        example: false
+    description: Load new raw satellite image_InternalError_Response_Body result type
+      (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -637,14 +657,14 @@ definitions:
       file_name:
         type: string
         description: File name of the raw image
-        example: Dicta quo explicabo ullam molestias.
+        example: Et qui.
       id:
         type: string
         description: The image identifier
-        example: Et quod sit.
+        example: Laudantium cumque.
     example:
-      file_name: Corporis laboriosam deserunt aliquid incidunt.
-      id: Ratione voluptates libero tenetur sunt necessitatibus.
+      file_name: Dolore impedit perferendis et ea.
+      id: Aut iure.
   RawImagesLoadNewRawSatelliteImageResponseBody:
     title: 'Mediatype identifier: vnd.application/goa.result+json; view=default'
     type: object
@@ -652,12 +672,12 @@ definitions:
       code:
         type: string
         description: The operation code
-        example: Dolore impedit perferendis et ea.
+        example: Aliquam velit.
       description:
         type: string
         description: The operation description
-        example: Facere rerum similique repudiandae beatae.
+        example: Velit et.
     description: Load New Raw Satellite ImageResponseBody result type (default view)
     example:
-      code: Deleniti at fuga.
-      description: Numquam aut.
+      code: Quia sunt occaecati maiores omnis.
+      description: Eos voluptates sit.

@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+  mongo:
+    image: mongo
+    ports:
+        - "27018:27018"
+    volumes:
+        - ./db:/data/db
+    networks:
+        - localhost
+  app:
+    image: image-loader
+    ports:
+      - "8080:8080"
+    restart: unless-stopped  
+    networks:
+      - localhost
+ 
+networks:
+  localhost:

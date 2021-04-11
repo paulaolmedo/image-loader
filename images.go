@@ -1,28 +1,12 @@
 package imageloaderapi
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	raw_images "image-loader/gen/raw_images"
-	"image-loader/mongo"
-	"io/ioutil"
-	"log"
+	"net/http"
 )
 
-type imagesrvc struct {
-	logger    *log.Logger
-	imagesDao mongo.ImageRepository
-}
+func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 
-//NewImageLoader .
-func NewImageLoader(logger *log.Logger, imagesDao mongo.ImageRepository) raw_images.Service {
-	return &imagesrvc{logger, imagesDao}
-}
-
-func (s *imagesrvc) LoadNewRawSatelliteImage(ctx context.Context, payload *raw_images.RawSatelliteImage) (result *raw_images.GoaResult, err error) {
-
-	filename := *payload.FileName
+	/*filename := "*payload.FileName"
 	if filename == "" {
 		return nil, raw_images.MakeBadRequest(errors.New("File name cannot be empty"))
 	}
@@ -33,7 +17,7 @@ func (s *imagesrvc) LoadNewRawSatelliteImage(ctx context.Context, payload *raw_i
 		return nil, raw_images.MakeBadRequest(err)
 	}
 
-	bytesWritten, err := s.imagesDao.AddRawImage(originalFile, filename)
+	bytesWritten, err := s.Database.AddRawImage(originalFile, filename)
 	//error adding image to database
 	if err != nil {
 		return nil, raw_images.MakeErrorAddingImage(err)
@@ -43,16 +27,16 @@ func (s *imagesrvc) LoadNewRawSatelliteImage(ctx context.Context, payload *raw_i
 	code := "200"
 	description := fmt.Sprintf("Bytes written %d", bytesWritten)
 	result = &raw_images.GoaResult{Code: &code, Description: &description}
-	return result, nil
+	return result, nil*/
 }
 
-func (s *imagesrvc) GetRawSatelliteImage(ctx context.Context, payload *raw_images.GetRawSatelliteImagePayload) (result *raw_images.GoaResult, err error) {
-	filename := *payload.FileName
+func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	/*filename := *payload.FileName
 	if filename == "" {
 		return nil, raw_images.MakeBadRequest(errors.New("File name cannot be empty"))
 	}
 
-	bytesRead, err := s.imagesDao.GetRawImage(filename)
+	bytesRead, err := s.Database.GetRawImage(filename)
 
 	if err != nil {
 		return nil, raw_images.MakeErrorGettingImage(err)
@@ -61,5 +45,5 @@ func (s *imagesrvc) GetRawSatelliteImage(ctx context.Context, payload *raw_image
 	code := "200"
 	description := fmt.Sprintf("Bytes read %d", bytesRead)
 	result = &raw_images.GoaResult{Code: &code, Description: &description}
-	return result, nil
+	return result, nil*/
 }

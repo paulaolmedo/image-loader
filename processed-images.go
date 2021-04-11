@@ -1,27 +1,11 @@
 package imageloaderapi
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	processed_images "image-loader/gen/processed_images"
-	"image-loader/mongo"
-	"io/ioutil"
-	"log"
+	"net/http"
 )
 
-type processedimagessrvc struct {
-	logger    *log.Logger
-	imagesDao mongo.ImageRepository
-}
-
-//NewProcessedImageLoader .
-func NewProcessedImageLoader(logger *log.Logger, imagesDao mongo.ImageRepository) processed_images.Service {
-	return &processedimagessrvc{logger, imagesDao}
-}
-
-func (s *processedimagessrvc) LoadNewProcessedSatelliteImage(ctx context.Context, payload *processed_images.ProcessedSatelliteImage) (*processed_images.GoaResult, error) {
-	filename := *payload.FileName
+func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	/*filename := *payload.FileName
 	if filename == "" {
 		return nil, processed_images.MakeBadRequest(errors.New("File name cannot be empty"))
 	}
@@ -32,13 +16,13 @@ func (s *processedimagessrvc) LoadNewProcessedSatelliteImage(ctx context.Context
 		return nil, processed_images.MakeBadRequest(err)
 	}
 
-	bytesWritten, err := s.imagesDao.AddProcessedImage(originalFile, filename)
+	bytesWritten, err := s.Database.AddProcessedImage(originalFile, filename)
 	//error adding image to database
 	if err != nil {
 		return nil, processed_images.MakeErrorAddingImage(err)
 	} //esto guarda la imagen en sí
 
-	id, err := s.imagesDao.AddProcessedImageData(payload)
+	id, err := s.Database.AddProcessedImageData(payload)
 	if err != nil {
 		return nil, processed_images.MakeErrorAddingImage(err)
 	} //esto guarda el resultado de la imagen procesada
@@ -47,10 +31,9 @@ func (s *processedimagessrvc) LoadNewProcessedSatelliteImage(ctx context.Context
 	code := "200"
 	description := fmt.Sprintf("Bytes written: %d, Id: %s", bytesWritten, id)
 	result := &processed_images.GoaResult{Code: &code, Description: &description}
-	return result, nil
+	return result, nil*/
 }
 
-func (s *processedimagessrvc) GetProcessedSatelliteImage(ctx context.Context, payload *processed_images.GetProcessedSatelliteImagePayload) (result *processed_images.GoaResult, err error) {
-	return nil, nil
+func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 
 }

@@ -18,7 +18,10 @@
 
 package mongo
 
-import processed_images "image-loader/gen/processed_images"
+import (
+	"errors"
+	processed_images "image-loader/gen/processed_images"
+)
 
 //properties of the database service
 type dbProperties struct {
@@ -27,11 +30,9 @@ type dbProperties struct {
 
 //DatabaseService contiene las funciones para manipular la bd
 type DatabaseService interface {
-	AddRawImage(originalFile []byte, filename string) (int, error)
-	AddProcessedImage(originalFile []byte, filename string) (int, error)
+	AddImage(originalFile []byte, filename string, imageType string) (int, error)
+	GetImage(filename string, imageType string) (int64, error)
 	AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error)
-	GetRawImage(filename string) (int64, error)
-	GetProcessedImage(filename string) (int64, error)
 }
 
 //NewImageService inicializa el servicio de basw de datos
@@ -39,23 +40,47 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 	return &dbProperties{imageRepository}
 }
 
-func (properties *dbProperties) AddRawImage(originalFile []byte, filename string) (int, error) {
-	return 0, nil
-}
-
-func (properties *dbProperties) AddProcessedImage(originalFile []byte, filename string) (int, error) {
-	return 0, nil
+func (properties *dbProperties) AddImage(originalFile []byte, filename string, imageType string) (int, error) {
+	if imageType == "raw" {
+		size, err := properties.imageRepository.AddRawImage(originalFile, filename)
+		if err != nil {
+			return 0, errors.New("an error ocurred while storing the raw image")
+		}
+		return size, nil
+	} else if imageType == "processed" {
+		size, err := properties.imageRepository.AddProcessedImage(originalFile, filename)
+		if err != nil {
+			return 0, errors.New("an error ocurred while storing the raw image")
+		}
+		return size, nil
+	} else {
+		return 0, errors.New("wrong image type selected")
+	}
 }
 
 func (properties *dbProperties) AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error) {
-	return "", nil
+	result, err := properties.imageRepository.AddProcessedImageData(image)
+	if err != nil {
+		return "", errors.New("an error ocurred while storing the processed image data")
+	}
 
+	return result, nil
 }
 
-func (properties *dbProperties) GetRawImage(filename string) (int64, error) {
-	return 0, nil
-}
-
-func (properties *dbProperties) GetProcessedImage(filename string) (int64, error) {
-	return 0, nil
+func (properties *dbProperties) GetImage(filename string, imageType string) (int64, error) {
+	if imageType == "raw" {
+		size, err := properties.imageRepository.GetRawImage(filename)
+		if err != nil {
+			return 0, errors.New("an error ocurred while retrieving the raw image")
+		}
+		return size, nil
+	} else if imageType == "processed" {
+		size, err := properties.imageRepository.GetProcessedImage(filename)
+		if err != nil {
+			return 0, errors.New("an error ocurred while retrieving the raw image")
+		}
+		return size, nil
+	} else {
+		return 0, errors.New("wrong image type selected")
+	}
 }

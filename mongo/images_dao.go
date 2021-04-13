@@ -30,7 +30,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	processed_images "image-loader/gen/processed_images"
+	processed_images "image-loader/models"
 )
 
 const (

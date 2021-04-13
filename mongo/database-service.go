@@ -20,7 +20,7 @@ package mongo
 
 import (
 	"errors"
-	processed_images "image-loader/gen/processed_images"
+	processed_images "image-loader/models"
 )
 
 //properties of the database service

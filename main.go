@@ -16,19 +16,21 @@
 //You should have received a copy of the GNU General Public License
 //along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-package imageloaderapi
+package main
 
 import (
+	server "image-loader/server"
+
 	"github.com/magiconair/properties"
 )
 
 func main() {
-	p := properties.MustLoadFile("app/app.properties", properties.UTF8)
+	p := properties.MustLoadFile("app.properties", properties.UTF8)
 
 	host := p.MustGetString("host")
 	databaseHost := p.MustGetString("database_host")
 
-	configuration := Server{}
+	configuration := server.Server{}
 	configuration.InitHTTPServer(databaseHost)
 	configuration.Run(host)
 

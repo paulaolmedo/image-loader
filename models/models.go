@@ -4,16 +4,16 @@ package models
 // Load new processed satellite image method.
 type ProcessedSatelliteImage struct {
 	// File name of the processed image
-	FileName              *string                `json:"file_name,omitempty"`
-	GeographicInformation *GeographicInformation `json:"geographic_information,omitempty"`
+	FileName              string                `json:"file_name,omitempty"`
+	GeographicInformation GeographicInformation `json:"geographic_information,omitempty"`
 	// When was the image taken
-	DateTime          *string            `json:"date_time,omitempty"`
-	NormalizedIndexes *NormalizedIndexes `json:"normalized_indexes,omitempty"`
+	DateTime          *string            `json:"date_time,omitempty"` // transformar a time.Time
+	NormalizedIndexes NormalizedIndexes `json:"normalized_indexes,omitempty"`
 }
 
 type GeographicInformation struct {
 	// Non-forgetable identifier
-	TagName *string
+	TagName string
 	// Coordinates of the satellite image
 	Coordinates map[string]float64
 }
@@ -31,5 +31,5 @@ type RawSatelliteImage struct {
 	// The image identifier
 	ID *string `bson:"_id"`
 	// File name of the raw image
-	FileName *string
+	FileName string `json:"file_name,omitempty"`
 }

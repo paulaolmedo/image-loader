@@ -23,8 +23,7 @@ import (
 	"log"
 	"net/http"
 
-	"image-loader/mongo"
-	dao "image-loader/mongo"
+	mongo "image-loader/mongo"
 
 	mux "github.com/gorilla/mux"
 	cors "github.com/rs/cors"
@@ -69,7 +68,7 @@ func (serverConfiguration *Server) InitRouters() {
 
 //InitDatabase .
 func (serverConfiguration *Server) InitDatabase(databasepath string) {
-	imageDao, err := dao.InitiateImageDao(databasepath)
+	imageDao, err := mongo.InitiateImageDao(databasepath)
 
 	if err != nil {
 		log.Fatalf("failed to connect %v ", err)

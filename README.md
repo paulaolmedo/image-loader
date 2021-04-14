@@ -1,9 +1,11 @@
 # Image loader 🛰️
 
-All the generated endpoints come from [design.go](https://github.com/paulaolmedo/image-loader/blob/dev/design/design.go). In case of make changes, to recompile use:
-```
-goa gen image-loader/design
-```
+## status
+
+[![Tests](https://github.com/paulaolmedo/image-loader/actions/workflows/go.yml/badge.svg)](https://github.com/paulaolmedo/image-loader/actions/workflows/go.yml)
+
+[![Build docker image](https://github.com/paulaolmedo/image-loader/actions/workflows/docker.yml/badge.svg)](https://github.com/paulaolmedo/image-loader/actions/workflows/docker.yml)
+
 ## how it works
 
 ### with 🐳
@@ -21,7 +23,7 @@ Build the docker image:
 ### without docker ⚒️
 Then, to build the application run:
  ```
- go build -o image-loader image-loader/cmd/image-loader-api
+ go build -o image-loader main.go
  ```
 
 And finally:

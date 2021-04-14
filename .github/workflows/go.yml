@@ -1,10 +1,7 @@
 name: Run Tests
 
 on:
-  push:
-    branches: [ refactor-server ]
-  pull_request:
-    branches: [ refactor-server ]
+   workflow_dispatch:
 
 jobs:
   test:
@@ -12,7 +9,7 @@ jobs:
     strategy:
       matrix:
         go-version: [1.16]
-        mongodb-version: [4.0, 4.2, 4.4]
+        mongodb-version: [4.4]
         
     steps:
     - name: Git checkout

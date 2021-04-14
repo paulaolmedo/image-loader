@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: [ refactor-server ]
   pull_request:
-    branches: [ master ]
+    branches: [ refactor-server ]
 
 jobs:
 

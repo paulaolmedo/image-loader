@@ -27,6 +27,7 @@ import (
 )
 
 func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	var imageProperties data.RawSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
@@ -35,13 +36,14 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	originalFile, err := ioutil.ReadFile(*imageProperties.FileName)
+	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
 	if err != nil {
 		description := fmt.Sprintf("Error reading data image %v", err)
 		jsonResponse(w, http.StatusBadRequest, description)
+		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, *imageProperties.FileName, "raw")
+	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.FileName, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
 		return
@@ -53,6 +55,8 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 
 //Esto lo tendría que pasar por query params y no por el body
 func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	var imageProperties data.RawSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
@@ -61,11 +65,12 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(*imageProperties.FileName, "raw")
+	bytesRead, err := s.Database.GetImage(imageProperties.FileName, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving raw image")
+		return
 	}
 
 	description := fmt.Sprintf("Bytes written %d", bytesRead)
-	jsonResponse(w, http.StatusCreated, description)
+	jsonResponse(w, http.StatusOK, description)
 }

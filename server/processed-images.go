@@ -26,14 +26,10 @@ import (
 	"net/http"
 )
 
-//ImageProperties
-type ImageProperties struct {
-	FileName string `json:"file_name"`
-	Type     string `json:"image_type"`
-}
-
 //LoadNewProcessedSatelliteImage stores a new processed image
 func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	
 	var imageProperties data.ProcessedSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
@@ -41,14 +37,15 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
 		return
 	}
-
-	originalFile, err := ioutil.ReadFile(*imageProperties.FileName)
+	
+	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
 	if err != nil {
-		description := fmt.Sprintf("Error reading data image", err)
+		description := fmt.Sprintf("Error reading data image %v", err)
 		jsonResponse(w, http.StatusBadRequest, description)
+		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, *imageProperties.FileName, "processed")
+	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.FileName, "processed")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
 		return

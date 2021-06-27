@@ -29,7 +29,7 @@ import (
 //LoadNewProcessedSatelliteImage stores a new processed image
 func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	
+
 	var imageProperties data.ProcessedSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
@@ -37,7 +37,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
 		return
 	}
-	
+
 	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
 	if err != nil {
 		description := fmt.Sprintf("Error reading data image %v", err)
@@ -62,5 +62,22 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 }
 
 func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	var imageProperties data.ProcessedSatelliteImage
+
+	err := json.NewDecoder(r.Body).Decode(&imageProperties)
+	if err != nil {
+		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+		return
+	}
+
+	bytesRead, err := s.Database.GetImage(imageProperties.FileName, "processed")
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, "Error retrieving processed image")
+		return
+	}
+
+	description := fmt.Sprintf("Bytes written %d", bytesRead)
+	jsonResponse(w, http.StatusOK, description)
 }

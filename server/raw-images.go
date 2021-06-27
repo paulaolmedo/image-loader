@@ -24,6 +24,7 @@ import (
 	data "image-loader/models"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
@@ -57,15 +58,15 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	var imageProperties data.RawSatelliteImage
+	queryParams := r.URL.Query()
+	filename := queryParams.Get("filename")
 
-	err := json.NewDecoder(r.Body).Decode(&imageProperties)
-	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+	if !strings.Contains(filename, ".tif") {
+		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(imageProperties.Filename, "raw")
+	bytesRead, err := s.Database.GetImage(filename, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving raw image")
 		return

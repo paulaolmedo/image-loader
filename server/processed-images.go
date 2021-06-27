@@ -24,6 +24,7 @@ import (
 	data "image-loader/models"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 //LoadNewProcessedSatelliteImage stores a new processed image
@@ -64,15 +65,15 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	var imageProperties data.ProcessedSatelliteImage
+	queryParams := r.URL.Query()
+	filename := queryParams.Get("filename")
 
-	err := json.NewDecoder(r.Body).Decode(&imageProperties)
-	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+	if !strings.Contains(filename, ".csv") {
+		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(imageProperties.Filename, "processed")
+	bytesRead, err := s.Database.GetImage(filename, "processed")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving processed image")
 		return

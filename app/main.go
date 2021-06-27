@@ -16,6 +16,22 @@
 //You should have received a copy of the GNU General Public License
 //along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Image loader
+//
+// @wip description
+//
+//     Schemes: http
+//     Host: 0.0.0.0:8080
+//	   BasePath: /
+//     Version: 1.0.0
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -23,6 +39,8 @@ import (
 
 	"github.com/magiconair/properties"
 )
+
+//go:generate swagger generate spec -m -o ../docs/swagger.yml
 
 func main() {
 	p := properties.MustLoadFile("app.properties", properties.UTF8)

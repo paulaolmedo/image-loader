@@ -38,14 +38,14 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
+	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
 	if err != nil {
 		description := fmt.Sprintf("Error reading data image %v", err)
 		jsonResponse(w, http.StatusBadRequest, description)
 		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.FileName, "processed")
+	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "processed")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
 		return
@@ -72,7 +72,7 @@ func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(imageProperties.FileName, "processed")
+	bytesRead, err := s.Database.GetImage(imageProperties.Filename, "processed")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving processed image")
 		return

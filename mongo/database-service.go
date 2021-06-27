@@ -30,8 +30,8 @@ type dbProperties struct {
 
 //DatabaseService contiene las funciones para manipular la bd
 type DatabaseService interface {
-	AddImage(originalFile []byte, filename string, imageType string) (int, error)
-	GetImage(filename string, imageType string) (int64, error)
+	AddImage(originalFile []byte, Filename string, imageType string) (int, error)
+	GetImage(Filename string, imageType string) (int64, error)
 	AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error)
 }
 
@@ -40,15 +40,15 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 	return &dbProperties{imageRepository}
 }
 
-func (properties *dbProperties) AddImage(originalFile []byte, filename string, imageType string) (int, error) {
+func (properties *dbProperties) AddImage(originalFile []byte, Filename string, imageType string) (int, error) {
 	if imageType == "raw" {
-		size, err := properties.imageRepository.AddRawImage(originalFile, filename)
+		size, err := properties.imageRepository.AddRawImage(originalFile, Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while storing the raw image")
 		}
 		return size, nil
 	} else if imageType == "processed" {
-		size, err := properties.imageRepository.AddProcessedImage(originalFile, filename)
+		size, err := properties.imageRepository.AddProcessedImage(originalFile, Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while storing the raw image")
 		}
@@ -67,15 +67,15 @@ func (properties *dbProperties) AddProcessedImageData(image *processed_images.Pr
 	return result, nil
 }
 
-func (properties *dbProperties) GetImage(filename string, imageType string) (int64, error) {
+func (properties *dbProperties) GetImage(Filename string, imageType string) (int64, error) {
 	if imageType == "raw" {
-		size, err := properties.imageRepository.GetRawImage(filename)
+		size, err := properties.imageRepository.GetRawImage(Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while retrieving the raw image")
 		}
 		return size, nil
 	} else if imageType == "processed" {
-		size, err := properties.imageRepository.GetProcessedImage(filename)
+		size, err := properties.imageRepository.GetProcessedImage(Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while retrieving the raw image")
 		}

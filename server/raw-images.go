@@ -36,14 +36,14 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
+	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
 	if err != nil {
 		description := fmt.Sprintf("Error reading data image %v", err)
 		jsonResponse(w, http.StatusBadRequest, description)
 		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.FileName, "raw")
+	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
 		return
@@ -65,7 +65,7 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(imageProperties.FileName, "raw")
+	bytesRead, err := s.Database.GetImage(imageProperties.Filename, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving raw image")
 		return

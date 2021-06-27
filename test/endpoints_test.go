@@ -29,11 +29,11 @@ func InitService() {
 	testserver = httptest.NewServer(testConfiguration.Router)
 }
 
-func InitRawImage(filename string) data.RawSatelliteImage {
-	return data.RawSatelliteImage{FileName: filename}
+func InitRawImage(Filename string) data.RawSatelliteImage {
+	return data.RawSatelliteImage{Filename: Filename}
 }
 
-func InitProcessedImage(filename string) data.ProcessedSatelliteImage {
+func InitProcessedImage(Filename string) data.ProcessedSatelliteImage {
 	coordinates := map[string]float64{
 		"x_min": -1.0,
 		"y_min": -1.0,
@@ -46,7 +46,7 @@ func InitProcessedImage(filename string) data.ProcessedSatelliteImage {
 	ndwi := []float64{1.0, 1.0}
 	normIndexes := data.NormalizedIndexes{Ndvi: ndvi, Ndwi: ndwi}
 
-	return data.ProcessedSatelliteImage{FileName: filename,
+	return data.ProcessedSatelliteImage{Filename: Filename,
 		GeographicInformation: geoData,
 		NormalizedIndexes:     normIndexes}
 }

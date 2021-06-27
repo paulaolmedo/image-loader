@@ -57,7 +57,7 @@ func TestLoadRawImage(test *testing.T) {
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/raw-images")
+		Post(testserver.URL + "/images/raw")
 
 	if err != nil {
 		test.Errorf("Error while calling endpoint: %v", err.Error())
@@ -81,7 +81,7 @@ func TestLoadNonExistentRawImage(test *testing.T) {
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/raw-images")
+		Post(testserver.URL + "/images/raw")
 
 	if err != nil {
 		test.Errorf("Error while calling endpoint: %v", err.Error())
@@ -99,7 +99,7 @@ func TestLoadProcessedImage(test *testing.T) {
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/processed-images")
+		Post(testserver.URL + "/images/processed")
 
 	if err != nil {
 		test.Errorf("Error while calling endpoint: %v", err.Error())
@@ -117,7 +117,7 @@ func TestLoadNonExistentProcessedImage(test *testing.T) {
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/processed-images")
+		Post(testserver.URL + "/images/processed")
 
 	if err != nil {
 		test.Errorf("Error while calling endpoint: %v", err.Error())

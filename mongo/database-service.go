@@ -41,19 +41,20 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 }
 
 func (properties *dbProperties) AddImage(originalFile []byte, Filename string, imageType string) (int, error) {
-	if imageType == "raw" {
+	switch imageType {
+	case "raw":
 		size, err := properties.imageRepository.AddRawImage(originalFile, Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while storing the raw image")
 		}
 		return size, nil
-	} else if imageType == "processed" {
+	case "processed":
 		size, err := properties.imageRepository.AddProcessedImage(originalFile, Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while storing the raw image")
 		}
 		return size, nil
-	} else {
+	default:
 		return 0, errors.New("wrong image type selected")
 	}
 }
@@ -68,19 +69,21 @@ func (properties *dbProperties) AddProcessedImageData(image *processed_images.Pr
 }
 
 func (properties *dbProperties) GetImage(Filename string, imageType string) (int64, error) {
-	if imageType == "raw" {
+	switch imageType {
+	case "raw":
 		size, err := properties.imageRepository.GetRawImage(Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while retrieving the raw image")
 		}
 		return size, nil
-	} else if imageType == "processed" {
+	case "processed":
 		size, err := properties.imageRepository.GetProcessedImage(Filename)
 		if err != nil {
 			return 0, errors.New("an error ocurred while retrieving the raw image")
 		}
 		return size, nil
-	} else {
+	default:
 		return 0, errors.New("wrong image type selected")
+
 	}
 }

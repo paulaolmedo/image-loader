@@ -38,6 +38,7 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 	}
 
 	// le pongo .tif por ahora pero no sé qué tipos de imagen podemos guardar
+	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
 	if !strings.Contains(imageProperties.Filename, ".tif") {
 		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return
@@ -67,7 +68,6 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	filename := queryParams.Get("filename")
 
-	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
 	if !strings.Contains(filename, ".tif") {
 		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return
@@ -79,6 +79,6 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	description := fmt.Sprintf("Bytes written %d", bytesRead)
+	description := fmt.Sprintf("Bytes read %d", bytesRead)
 	jsonResponse(w, http.StatusOK, description)
 }

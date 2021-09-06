@@ -71,7 +71,6 @@ func TestLoadRawImage(test *testing.T) {
 	assert.Equal(test, data, "\"Bytes written 4940427\"\n")
 	assert.Equal(test, response.StatusCode(), http.StatusCreated)
 	test.Logf("image correctly stored")
-
 }
 
 func TestLoadNonExistentRawImage(test *testing.T) {
@@ -89,7 +88,39 @@ func TestLoadNonExistentRawImage(test *testing.T) {
 
 	assert.Equal(test, http.StatusBadRequest, response.StatusCode())
 	test.Logf("no such image! error reading data")
+}
 
+func TestLoadErronousRawImage(test *testing.T) {
+	rawImage := InitRawImage("./non_existent_file.someotherextension")
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(rawImage).
+		EnableTrace().
+		Post(testserver.URL + "/images/raw")
+
+	if err != nil {
+		test.Errorf("Error while calling endpoint: %v", err.Error())
+	}
+
+	assert.Equal(test, http.StatusConflict, response.StatusCode())
+	test.Logf("did not recognized file extension")
+}
+
+func TestLoadRawImageWithEmptyBody(test *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(nil).
+		EnableTrace().
+		Post(testserver.URL + "/images/raw")
+
+	if err != nil {
+		test.Errorf("Error while calling endpoint: %v", err.Error())
+	}
+
+	assert.Equal(test, http.StatusConflict, response.StatusCode())
+	test.Logf("did not recognized file extension")
 }
 
 func TestLoadProcessedImage(test *testing.T) {
@@ -107,7 +138,6 @@ func TestLoadProcessedImage(test *testing.T) {
 
 	assert.Equal(test, response.StatusCode(), http.StatusCreated)
 	test.Logf("image correctly stored")
-
 }
 
 func TestLoadNonExistentProcessedImage(test *testing.T) {
@@ -125,5 +155,4 @@ func TestLoadNonExistentProcessedImage(test *testing.T) {
 
 	assert.Equal(test, http.StatusBadRequest, response.StatusCode())
 	test.Logf("no such image! error reading data")
-
 }

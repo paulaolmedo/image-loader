@@ -28,12 +28,18 @@ import (
 )
 
 func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 	var imageProperties data.RawSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+		return
+	}
+
+	// le pongo .tif por ahora pero no sé qué tipos de imagen podemos guardar
+	if !strings.Contains(imageProperties.Filename, ".tif") {
+		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return
 	}
 
@@ -56,11 +62,12 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 
 //Esto lo tendría que pasar por query params y no por el body
 func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 
 	queryParams := r.URL.Query()
 	filename := queryParams.Get("filename")
 
+	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
 	if !strings.Contains(filename, ".tif") {
 		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return

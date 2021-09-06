@@ -212,7 +212,7 @@ func (serverConfiguration *Server) InitDatabase(databasepath string) {
 	imageDao, err := mongo.InitiateImageDao(databasepath)
 
 	if err != nil {
-		log.Fatalf("failed to connect %v ", err)
+		log.Fatalf(connectionError, err)
 	}
 	serverConfiguration.Database = mongo.NewImageService(imageDao)
 
@@ -221,7 +221,7 @@ func (serverConfiguration *Server) InitDatabase(databasepath string) {
 //SetMiddlewareJSON .
 func SetMiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentType, appJSON)
 		next(w, r)
 	}
 }

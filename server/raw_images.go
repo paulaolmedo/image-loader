@@ -33,31 +33,31 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+		jsonResponse(w, http.StatusBadRequest, errorReadingJSON)
 		return
 	}
 
 	// le pongo .tif por ahora pero no sé qué tipos de imagen podemos guardar
 	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
-	if !strings.Contains(imageProperties.Filename, ".tif") {
-		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
+	if !strings.Contains(imageProperties.Filename, tif) {
+		jsonResponse(w, http.StatusConflict, errorReadingFilename)
 		return
 	}
 
 	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
 	if err != nil {
-		description := fmt.Sprintf("Error reading data image %v", err)
+		description := fmt.Sprintf(errorReadingFileData, err)
 		jsonResponse(w, http.StatusBadRequest, description)
 		return
 	}
 
 	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
+		jsonResponse(w, http.StatusInternalServerError, errorStoringData)
 		return
 	} //guardo la imagen en sí
 
-	description := fmt.Sprintf("Bytes written %d", bytesWritten)
+	description := fmt.Sprintf(bWritten, bytesWritten)
 	jsonResponse(w, http.StatusCreated, description)
 }
 
@@ -68,8 +68,8 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 	filename := queryParams.Get("filename")
 
-	if !strings.Contains(filename, ".tif") {
-		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
+	if !strings.Contains(filename, tif) {
+		jsonResponse(w, http.StatusConflict, errorReadingFilename)
 		return
 	}
 
@@ -79,6 +79,6 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	description := fmt.Sprintf("Bytes read %d", bytesRead)
+	description := fmt.Sprintf(bRead, bytesRead)
 	jsonResponse(w, http.StatusOK, description)
 }

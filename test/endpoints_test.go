@@ -63,12 +63,10 @@ func TestLoadRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	//4940427
-	data := string(response.Body())
-	if err != nil {
-		t.Errorf("Error converting data: %v", err.Error())
-	}
+	actualResponse := string(response.Body())
+	expectedResponse := "\"Bytes written 4940427\"\n"
 
-	assert.Equal(t, data, "\"Bytes written 4940427\"\n")
+	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, response.StatusCode(), http.StatusCreated)
 	t.Logf("image correctly stored")
 }
@@ -86,11 +84,8 @@ func TestGetRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	if err != nil {
-		t.Errorf("Error converting data: %v", err.Error())
-	}
-
 	expectedResponse := "\"Bytes read 4940427\"\n"
+	
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusOK, response.StatusCode())
 }
@@ -108,12 +103,9 @@ func TestGetNonExistentRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	if err != nil {
-		t.Errorf("Error converting data: %v", err.Error())
-	}
-
 	// TODO cuando no encuentra la imagen debería devolver 404
 	expectedResponse := "\"Error retrieving raw image\"\n"
+	
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())
 }
@@ -160,11 +152,8 @@ func TestGetErronousRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	if err != nil {
-		t.Errorf("Error converting data: %v", err.Error())
-	}
-
-	expectedResponse := "\"did not recognized file extension\"\n"
+	expectedResponse := "\"Unsuported filename.\"\n"
+	
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusConflict, response.StatusCode())
 }
@@ -180,7 +169,7 @@ func TestLoadRawImageWithEmptyBody(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
-	t.Logf("did not recognized file extension")
+	t.Logf("invalid body")
 }
 
 func TestLoadProcessedImage(t *testing.T) {

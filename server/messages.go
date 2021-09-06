@@ -6,15 +6,13 @@ import (
 	"net/http"
 )
 
-// jsonResponse .
+// jsonResponse builds the endpoints response
 func jsonResponse(w http.ResponseWriter, statusCode int, response interface{}) {
-
 	w.WriteHeader(statusCode)
 
-	err := json.NewEncoder(w).Encode(response) //puede ser datos de verdad o un error
+	err := json.NewEncoder(w).Encode(response)
 
 	if err != nil {
-		fmt.Fprintf(w, "%s", err.Error()) //error parseando el mensaje
+		fmt.Fprintf(w, "%s", err.Error())
 	}
-
 }

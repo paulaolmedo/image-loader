@@ -29,7 +29,7 @@ import (
 
 //LoadNewProcessedSatelliteImage stores a new processed image
 func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 
 	var imageProperties data.ProcessedSatelliteImage
 
@@ -50,7 +50,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
 		return
-	} //guardo la imagen en sí
+	}
 
 	id, err := s.Database.AddProcessedImageData(&imageProperties)
 	if err != nil {
@@ -63,11 +63,12 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 }
 
 func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 
 	queryParams := r.URL.Query()
 	filename := queryParams.Get("filename")
 
+	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
 	if !strings.Contains(filename, ".csv") {
 		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
 		return

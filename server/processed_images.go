@@ -28,6 +28,7 @@ import (
 )
 
 //LoadNewProcessedSatelliteImage stores a new processed image
+// TODO al iguala que las imágenes no procesadas, controlar el contenido de lo que se está guardando
 func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 
@@ -62,6 +63,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 	jsonResponse(w, http.StatusCreated, description)
 }
 
+// GetProcessedSatelliteImage
 func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 

@@ -187,6 +187,20 @@ func TestLoadProcessedImage(t *testing.T) {
 	t.Logf("image correctly stored")
 }
 
+func TestLoadProcessedImageWithEmptyBody(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(nil).
+		EnableTrace().
+		Post(testserver.URL + "/images/processed")
+
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	t.Logf("invalid body")
+}
+
 func TestLoadNonExistentProcessedImage(t *testing.T) {
 	rawImage := InitProcessedImage("./non_existent_file.tif")
 	client := resty.New()
@@ -200,4 +214,23 @@ func TestLoadNonExistentProcessedImage(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
 	t.Logf("no such image! error reading data")
+}
+
+func TestGetInvalidProcessedImage(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetQueryParams(map[string]string{
+			"filename": "./processing_results.someotherextension",
+		}).
+		EnableTrace().
+		Get(testserver.URL + "/images/processed")
+
+	require.NoError(t, err)
+
+	actualResponse := string(response.Body())
+	expectedResponse := "\"Unsuported filename.\"\n"
+
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, http.StatusConflict, response.StatusCode())
 }

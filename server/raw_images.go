@@ -53,7 +53,7 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 
 	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, errorStoringData)
+		jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
 		return
 	} //guardo la imagen en sí
 

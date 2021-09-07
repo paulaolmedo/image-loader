@@ -16,16 +16,17 @@ const (
 	appJSON     = "application/json; charset=UTF-8"
 
 	// ERRORS
-	connectionError      = "Failed to connect %v"
-	errorReadingJSON     = "Error reading JSON data."
-	errorReadingFilename = "Unsuported filename."
-	errorReadingFileData = "Error reading data image %v"
-	errorStoringData     = "Error storing image"
-	errorRetrievingData  = "Error retrieving %v image."
+	connectionError       = "Failed to connect %v"
+	errorReadingJSON      = "Error reading JSON data."
+	errorReadingFilename  = "Unsuported filename."
+	errorReadingFileData  = "Error reading data image %v"
+	errorStoringImage     = "Error storing image."
+	errorStoringDataImage = "Error storing data image."
+	errorRetrievingData   = "Error retrieving %v image."
 
 	// SUCCESS MESSAGES
-	bWritten = "Bytes written %d"
-	bRead    = "Bytes read %d"
+	bWritten = "Bytes written: %d. "
+	bRead    = "Bytes read: %d. "
 )
 
 // jsonResponse builds the endpoints response

@@ -35,30 +35,30 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+		jsonResponse(w, http.StatusBadRequest, errorReadingJSON)
 		return
 	}
 
 	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
 	if err != nil {
-		description := fmt.Sprintf("Error reading data image %v", err)
+		description := fmt.Sprintf(errorReadingFileData, err)
 		jsonResponse(w, http.StatusBadRequest, description)
 		return
 	}
 
 	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "processed")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
+		jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
 		return
 	}
 
 	id, err := s.Database.AddProcessedImageData(&imageProperties)
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error storing data image")
+		jsonResponse(w, http.StatusInternalServerError, errorStoringDataImage)
 		return
 	}
-
-	description := fmt.Sprintf("Bytes written: %v, Id: %v", bytesWritten, id)
+	response := bWritten + "Id: %v"
+	description := fmt.Sprintf(response, bytesWritten, id)
 	jsonResponse(w, http.StatusCreated, description)
 }
 
@@ -69,8 +69,8 @@ func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Reque
 	filename := queryParams.Get("filename")
 
 	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
-	if !strings.Contains(filename, ".csv") {
-		jsonResponse(w, http.StatusConflict, "did not recognized file extension")
+	if !strings.Contains(filename, csv) {
+		jsonResponse(w, http.StatusConflict, errorReadingFilename)
 		return
 	}
 
@@ -80,6 +80,6 @@ func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	description := fmt.Sprintf("Bytes written %d", bytesRead)
+	description := fmt.Sprintf(bWritten, bytesRead)
 	jsonResponse(w, http.StatusOK, description)
 }

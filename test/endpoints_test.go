@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// hacer una base de datos de "prueba"
 const mongoURL = "mongodb://localhost:27017"
 
 var testserver *httptest.Server
@@ -34,7 +35,7 @@ func InitRawImage(Filename string) data.RawSatelliteImage {
 	return data.RawSatelliteImage{Filename: Filename}
 }
 
-func InitProcessedImage(Filename string) data.ProcessedSatelliteImage {
+func InitProcessedImage(imageFilename string, resultsFileName string) data.ProcessedSatelliteImage {
 	coordinates := map[string]float64{
 		"x_min": -1.0,
 		"y_min": -1.0,
@@ -47,7 +48,8 @@ func InitProcessedImage(Filename string) data.ProcessedSatelliteImage {
 	ndwi := []float64{1.0, 1.0}
 	normIndexes := data.NormalizedIndexes{Ndvi: ndvi, Ndwi: ndwi}
 
-	return data.ProcessedSatelliteImage{Filename: Filename,
+	return data.ProcessedSatelliteImage{ImageFilename: imageFilename,
+		ResultsFilename:       resultsFileName,
 		GeographicInformation: geoData,
 		NormalizedIndexes:     normIndexes}
 }
@@ -64,7 +66,7 @@ func TestLoadRawImage(t *testing.T) {
 
 	//4940427
 	actualResponse := string(response.Body())
-	expectedResponse := "\"Bytes written: 4940427. \"\n"
+	expectedResponse := "\"Bytes written while storing raw image: 4940427. \"\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, response.StatusCode(), http.StatusCreated)
@@ -109,6 +111,7 @@ func TestGetNonExistentRawImage(t *testing.T) {
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())
 }
+
 func TestLoadNonExistentRawImage(t *testing.T) {
 	rawImage := InitRawImage("./non_existent_file.tif")
 	client := resty.New()
@@ -173,7 +176,7 @@ func TestLoadRawImageWithEmptyBody(t *testing.T) {
 }
 
 func TestLoadProcessedImage(t *testing.T) {
-	rawImage := InitProcessedImage("./test_image.tif")
+	rawImage := InitProcessedImage("./test_image.tif", "./processing_results.csv")
 	client := resty.New()
 
 	response, err := client.R().
@@ -183,6 +186,10 @@ func TestLoadProcessedImage(t *testing.T) {
 
 	require.NoError(t, err)
 
+	//actualResponse := string(response.Body())
+	//expectedResponse := "\"Bytes written while storing processed image: 4940427. Bytes written while storing results image: 11588. Id of the stored results: ObjectID(\\\"6138a617c154acb25e2d3db3\\\")\"\n"
+
+	//assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, response.StatusCode(), http.StatusCreated)
 	t.Logf("image correctly stored")
 }
@@ -202,7 +209,7 @@ func TestLoadProcessedImageWithEmptyBody(t *testing.T) {
 }
 
 func TestLoadNonExistentProcessedImage(t *testing.T) {
-	rawImage := InitProcessedImage("./non_existent_file.tif")
+	rawImage := InitProcessedImage("./non_existent_file.tif", "")
 	client := resty.New()
 
 	response, err := client.R().

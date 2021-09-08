@@ -40,27 +40,48 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
-	if err != nil {
-		description := fmt.Sprintf(errorReadingFileData, err)
-		jsonResponse(w, http.StatusBadRequest, description)
-		return
+	imageFilename := imageProperties.ImageFilename
+	resultsFilename := imageProperties.ResultsFilename
+
+	var image []byte
+	if imageFilename != "" && strings.Contains(imageFilename, tif) {
+		image, err = ioutil.ReadFile(imageProperties.ImageFilename) // might be empty
+		if err != nil {
+			description := fmt.Sprintf(errorReadingFileData, err)
+			jsonResponse(w, http.StatusBadRequest, description)
+			return
+		}
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "processed")
+	var results []byte
+	if resultsFilename != "" && strings.Contains(resultsFilename, csv) {
+		results, err = ioutil.ReadFile(imageProperties.ResultsFilename)
+		if err != nil {
+			description := fmt.Sprintf(errorReadingFileData, err)
+			jsonResponse(w, http.StatusBadRequest, description)
+			return
+		}
+	}
+
+	// primero va a agregar la imagen en caso de que exista
+	var responseFromImage string
+	if image != nil {
+		responseFromImage, err = s.Database.AddImage(image, imageFilename, "processed")
+		if err != nil {
+			jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
+			return
+		}
+	}
+
+	// agrega los resultados del procesamiento (esto sí que tiene que hacerse si o si)
+	responseFromResults, err := s.Database.AddImage(results, resultsFilename, "results", &imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
 		return
 	}
 
-	id, err := s.Database.AddProcessedImageData(&imageProperties)
-	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, errorStoringDataImage)
-		return
-	}
-	response := bWritten + "Id: %v"
-	description := fmt.Sprintf(response, bytesWritten, id)
-	jsonResponse(w, http.StatusCreated, description)
+	response := responseFromImage + responseFromResults
+	jsonResponse(w, http.StatusCreated, response)
 }
 
 // GetProcessedSatelliteImage

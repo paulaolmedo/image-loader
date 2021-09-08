@@ -51,14 +51,13 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
+	response, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
 		return
 	} //guardo la imagen en sí
 
-	description := fmt.Sprintf(bWritten, bytesWritten)
-	jsonResponse(w, http.StatusCreated, description)
+	jsonResponse(w, http.StatusCreated, response)
 }
 
 //Esto lo tendría que pasar por query params y no por el body

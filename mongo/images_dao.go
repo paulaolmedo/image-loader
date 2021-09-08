@@ -21,7 +21,9 @@ package mongo
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	processed_images "image-loader/models"
 	"io/ioutil"
 	"time"
 
@@ -29,21 +31,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	processed_images "image-loader/models"
 )
 
 const (
-	rawDatabase       = "safo-raw"
-	processedDatabase = "safo-processed"
-	filesCollection   = "fs.files"
+	rawDatabase              = "safo-raw"
+	processedImagesDatabase  = "safo-processed-images"
+	processedResultsDatabase = "safo-processed-results"
+	filesCollection          = "fs.files"
 )
 
 //ImageRepository to manage the db access
 type ImageRepository interface {
-	AddRawImage(originalFile []byte, Filename string) (int, error)
-	AddProcessedImage(originalFile []byte, Filename string) (int, error)
-	AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error)
+	AddFile(file []byte, filename string, fileType string) (int, error)
+	AddProcessedImage(originalFile []byte, Filename string) (int, error) // esta habría que deprecarla
+	AddProcessedImageData(image ...*processed_images.ProcessedSatelliteImage) (string, error)
 	GetRawImage(Filename string) (int64, error)
 	GetProcessedImage(Filename string) (int64, error)
 }
@@ -68,17 +69,35 @@ func InitiateImageDao(url string) (*ImageDao, error) {
 }
 
 //AddRawImage new raw image to the database
-func (dao *ImageDao) AddRawImage(originalFile []byte, Filename string) (int, error) {
-	bucket, err := gridfs.NewBucket(
-		dao.mongoClient.Database(rawDatabase),
-	)
+func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int, error) {
+	var err error
+	var bucket *gridfs.Bucket
 
+	switch fileType {
+	case "raw":
+		bucket, err = gridfs.NewBucket(
+			dao.mongoClient.Database(rawDatabase),
+		)
+	case "processed":
+		bucket, err = gridfs.NewBucket(
+			dao.mongoClient.Database(processedImagesDatabase),
+		)
+	case "results":
+		bucket, err = gridfs.NewBucket(
+			dao.mongoClient.Database(processedResultsDatabase),
+		)
+	default:
+		err := errors.New("no such option")
+		return 0, err
+
+	}
 	//error opening database connection
 	if err != nil {
 		return 0, err
 	}
+
 	uploadStream, err := bucket.OpenUploadStream(
-		Filename,
+		filename,
 	)
 	//error opening upload stream
 	if err != nil {
@@ -86,7 +105,7 @@ func (dao *ImageDao) AddRawImage(originalFile []byte, Filename string) (int, err
 	}
 	defer uploadStream.Close()
 
-	fileSize, err := uploadStream.Write(originalFile)
+	fileSize, err := uploadStream.Write(file)
 	//error writing stream
 	if err != nil {
 		return 0, err
@@ -129,15 +148,15 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 }
 
 //AddProcessedImageData .
-func (dao *ImageDao) AddProcessedImageData(imageData *processed_images.ProcessedSatelliteImage) (string, error) {
+func (dao *ImageDao) AddProcessedImageData(image ...*processed_images.ProcessedSatelliteImage) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
 	defer cancel()
 
-	collection := dao.mongoClient.Database(processedDatabase).Collection("data")
-	result, err := collection.InsertOne(ctx, bson.M{"data": imageData})
+	// esto genera una nueva colección en la base de datos de imgs procesadas
+	collection := dao.mongoClient.Database(processedResultsDatabase).Collection("data")
+	result, err := collection.InsertOne(ctx, bson.M{"data": image})
 
-	if err != nil { //fmt.Sprintf(bytesWritten)
+	if err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("%s", result.InsertedID), err
@@ -147,7 +166,7 @@ func (dao *ImageDao) AddProcessedImageData(imageData *processed_images.Processed
 //TODO parametrizar y que sea un sólo método para las dos cosas
 func (dao *ImageDao) AddProcessedImage(originalFile []byte, Filename string) (int, error) {
 	bucket, err := gridfs.NewBucket(
-		dao.mongoClient.Database(processedDatabase),
+		dao.mongoClient.Database(processedImagesDatabase),
 	)
 
 	//error opening database connection
@@ -174,7 +193,7 @@ func (dao *ImageDao) AddProcessedImage(originalFile []byte, Filename string) (in
 //GetProcessedImage test
 func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
 
-	db := dao.mongoClient.Database(processedDatabase)
+	db := dao.mongoClient.Database(processedImagesDatabase)
 	fsFiles := db.Collection(filesCollection)
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)

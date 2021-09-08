@@ -20,6 +20,7 @@ package mongo
 
 import (
 	"errors"
+	"fmt"
 	processed_images "image-loader/models"
 )
 
@@ -30,9 +31,8 @@ type dbProperties struct {
 
 //DatabaseService contiene las funciones para manipular la bd
 type DatabaseService interface {
-	AddImage(originalFile []byte, Filename string, imageType string) (int, error)
+	AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error)
 	GetImage(Filename string, imageType string) (int64, error)
-	AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error)
 }
 
 //NewImageService inicializa el servicio de basw de datos
@@ -40,32 +40,26 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 	return &dbProperties{imageRepository}
 }
 
-func (properties *dbProperties) AddImage(originalFile []byte, Filename string, imageType string) (int, error) {
-	switch imageType {
-	case "raw":
-		size, err := properties.imageRepository.AddRawImage(originalFile, Filename)
-		if err != nil {
-			return 0, errors.New("an error ocurred while storing the raw image")
-		}
-		return size, nil
-	case "processed":
-		size, err := properties.imageRepository.AddProcessedImage(originalFile, Filename)
-		if err != nil {
-			return 0, errors.New("an error ocurred while storing the raw image")
-		}
-		return size, nil
-	default:
-		return 0, errors.New("wrong image type selected")
-	}
-}
+func (properties *dbProperties) AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
 
-func (properties *dbProperties) AddProcessedImageData(image *processed_images.ProcessedSatelliteImage) (string, error) {
-	result, err := properties.imageRepository.AddProcessedImageData(image)
+	size, err := properties.imageRepository.AddFile(image, imageFilename, operation)
 	if err != nil {
-		return "", errors.New("an error ocurred while storing the processed image data")
+		return "", errors.New("an error ocurred while storing the file")
 	}
 
-	return result, nil
+	response := "Bytes written while storing %v image: %v. "
+
+	if operation == "results" {
+		result, err := properties.imageRepository.AddProcessedImageData(imageProperties...)
+		if err != nil {
+			return "", errors.New("an error ocurred while storing the processed image data")
+		}
+
+		response += "Id of the stored results: " + result
+	}
+
+	description := fmt.Sprintf(response, operation, size)
+	return description, nil
 }
 
 func (properties *dbProperties) GetImage(Filename string, imageType string) (int64, error) {

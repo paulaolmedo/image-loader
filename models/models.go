@@ -9,7 +9,9 @@ import "time"
 // swagger:model
 type ProcessedSatelliteImage struct {
 	// Filename of the processing results (.csv)
-	Filename string `json:"file_name,omitempty"`
+	ResultsFilename string `json:"results,omitempty"`
+	// Filename of the processing results (.csv)
+	ImageFilename string `json:"image,omitempty"`
 	// General geographic information associated to the image
 	GeographicInformation GeographicInformation `json:"geographic_information,omitempty"`
 	// When was the image taken
@@ -37,9 +39,9 @@ type RawSatelliteImage struct {
 // swagger:model
 type GeographicInformation struct {
 	// Non-forgetable identifier
-	TagName string
+	TagName string `json:"tag_name,omitempty"`
 	// Main coordinates of the processed image
-	Coordinates map[string]float64
+	Coordinates map[string]float64 `json:"coordinates,omitempty"`
 }
 
 // NormalizedIndexes
@@ -49,9 +51,9 @@ type GeographicInformation struct {
 // swagger:model
 type NormalizedIndexes struct {
 	// Normalized difference vegetation index
-	Ndvi []float64
+	Ndvi []float64 `json:"ndvi,omitempty"`
 	// Normalized difference water index
-	Ndwi []float64
+	Ndwi []float64 `json:"ndwi,omitempty"`
 }
 
 //ModelError

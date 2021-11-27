@@ -28,3 +28,6 @@ And finally:
 ```
 ./image-loader -mongodb mongodb://localhost:27017
 ```
+
+go tool cover -html=cover.out -o coverage.html
+go test -v -coverpkg ./server/ ./test/endpoints_test.go -coverprofile=cover.out

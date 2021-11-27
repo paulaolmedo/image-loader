@@ -1,0 +1,224 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  GeographicInformation:
+    description: Geographic information of an image
+    properties:
+      Coordinates:
+        additionalProperties:
+          format: double
+          type: number
+        description: Main coordinates of the processed image
+        type: object
+      TagName:
+        description: Non-forgetable identifier
+        type: string
+    title: GeographicInformation
+    type: object
+    x-go-package: image-loader/models
+  ModelError:
+    description: '@wip description'
+    properties:
+      code:
+        description: código de error
+        type: string
+        x-go-name: Code
+      message:
+        description: mensaje
+        type: string
+        x-go-name: Message
+    title: ModelError
+    type: object
+    x-go-package: image-loader/models
+  NormalizedIndexes:
+    description: '@wip description'
+    properties:
+      Ndvi:
+        description: Normalized difference vegetation index
+        items:
+          format: double
+          type: number
+        type: array
+      Ndwi:
+        description: Normalized difference water index
+        items:
+          format: double
+          type: number
+        type: array
+    title: NormalizedIndexes
+    type: object
+    x-go-package: image-loader/models
+  ProcessedSatelliteImage:
+    description: Payload type of the processed images service
+    properties:
+      date_time:
+        description: When was the image taken
+        format: date-time
+        type: string
+        x-go-name: DateTime
+      file_name:
+        description: Filename of the processing results (.csv)
+        type: string
+        x-go-name: Filename
+      geographic_information:
+        $ref: '#/definitions/GeographicInformation'
+      normalized_indexes:
+        $ref: '#/definitions/NormalizedIndexes'
+    title: ProcessedSatelliteImage
+    type: object
+    x-go-package: image-loader/models
+  RawSatelliteImage:
+    description: Payload type of the raw images service
+    properties:
+      ID:
+        description: The image identifier
+        type: string
+      file_name:
+        description: Filename of the raw image
+        type: string
+        x-go-name: Filename
+    title: RawSatelliteImage
+    type: object
+    x-go-package: image-loader/models
+host: 0.0.0.0:8080
+info:
+  description: '@wip description'
+  title: Image loader
+  version: 1.0.0
+paths:
+  /images/processed:
+    post:
+      description: '@WIP'
+      operationId: LoadNewProcessedSatelliteImage
+      parameters:
+      - description: Image information
+        in: body
+        name: processed satellite image
+        required: true
+        schema:
+          $ref: '#/definitions/ProcessedSatelliteImage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Processed image details (bytes written into the database)
+          schema:
+            items:
+              $ref: '#/definitions/ProcessedSatelliteImage'
+            type: array
+        "409":
+          description: Processed image already exists
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+      summary: Load new processed image
+  /images/processed/{Filename}:
+    get:
+      description: '@WIP'
+      operationId: GetProcessedSatelliteImage
+      parameters:
+      - description: processed image identification
+        in: path
+        name: Filename
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: processed image details (bytes written to local storage)
+          schema:
+            items:
+              $ref: '#/definitions/ProcessedSatelliteImage'
+            type: array
+        "409":
+          description: I/O conflict while writting to local storage
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+      summary: Retrieve processed image
+  /images/raw:
+    post:
+      description: '@WIP'
+      operationId: LoadNewRawSatelliteImage
+      parameters:
+      - description: Image information
+        in: body
+        name: raw satellite image
+        required: true
+        schema:
+          $ref: '#/definitions/RawSatelliteImage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Raw image details (bytes written into the database)
+          schema:
+            items:
+              $ref: '#/definitions/RawSatelliteImage'
+            type: array
+        "409":
+          description: Raw image already exists
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+      summary: Load new raw image
+  /images/raw/{Filename}:
+    get:
+      description: '@WIP'
+      operationId: GetRawSatelliteImage
+      parameters:
+      - description: raw image identification
+        in: path
+        name: Filename
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Raw image details (bytes written to local storage)
+          schema:
+            items:
+              $ref: '#/definitions/RawSatelliteImage'
+            type: array
+        "409":
+          description: I/O conflict while writting to local storage
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+      summary: Retrieve raw image
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"

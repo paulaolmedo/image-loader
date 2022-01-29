@@ -21,13 +21,13 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	data "image-loader/models"
+	data "image-loader/internal/models"
 	"io/ioutil"
 	"net/http"
 	"strings"
 )
 
-//LoadNewProcessedSatelliteImage stores a new processed image
+// LoadNewProcessedSatelliteImage stores a new processed image
 // TODO al iguala que las imágenes no procesadas, controlar el contenido de lo que se está guardando
 func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)

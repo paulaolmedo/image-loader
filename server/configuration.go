@@ -23,7 +23,7 @@ import (
 	"log"
 	"net/http"
 
-	mongo "image-loader/mongo"
+	mongo "image-loader/internal/mongo"
 
 	mux "github.com/gorilla/mux"
 	cors "github.com/rs/cors"
@@ -35,7 +35,7 @@ type Server struct {
 	Database mongo.DatabaseService
 }
 
-//Init configuration
+// Init configuration
 func (serverConfiguration *Server) InitHTTPServer(databasepath string) {
 	serverConfiguration.InitDatabase(databasepath)
 	serverConfiguration.Router = mux.NewRouter()
@@ -50,14 +50,14 @@ func (serverConfiguration *Server) InitHTTPServer(databasepath string) {
 	})
 }
 
-//Run .
+// Run .
 func (serverConfiguration *Server) Run(host string) {
 	fmt.Println("Listening to:", host)
 	handler := cors.Default().Handler(serverConfiguration.Router)
 	log.Fatal(http.ListenAndServe(host, handler))
 }
 
-//InitRouters .
+// InitRouters .
 func (serverConfiguration *Server) InitRouters() {
 	// swagger:operation POST /images/raw LoadNewRawSatelliteImage
 	//
@@ -204,21 +204,18 @@ func (serverConfiguration *Server) InitRouters() {
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	serverConfiguration.Router.HandleFunc("/images/processed", SetMiddlewareJSON(serverConfiguration.GetProcessedSatelliteImage)).Methods("GET")
-
 }
 
-//InitDatabase .
+// InitDatabase .
 func (serverConfiguration *Server) InitDatabase(databasepath string) {
 	imageDao, err := mongo.InitiateImageDao(databasepath)
-
 	if err != nil {
 		log.Fatalf(connectionError, err)
 	}
 	serverConfiguration.Database = mongo.NewImageService(imageDao)
-
 }
 
-//SetMiddlewareJSON .
+// SetMiddlewareJSON .
 func SetMiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(contentType, appJSON)

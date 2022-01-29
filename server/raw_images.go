@@ -21,7 +21,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	data "image-loader/models"
+	data "image-loader/internal/models"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -55,12 +55,12 @@ func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, errorStoringImage)
 		return
-	} //guardo la imagen en sí
+	} // guardo la imagen en sí
 
 	jsonResponse(w, http.StatusCreated, response)
 }
 
-//Esto lo tendría que pasar por query params y no por el body
+// Esto lo tendría que pasar por query params y no por el body
 func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 

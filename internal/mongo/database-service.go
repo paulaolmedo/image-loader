@@ -21,27 +21,26 @@ package mongo
 import (
 	"errors"
 	"fmt"
-	processed_images "image-loader/models"
+	processed_images "image-loader/internal/models"
 )
 
-//properties of the database service
+// properties of the database service
 type dbProperties struct {
 	imageRepository ImageRepository
 }
 
-//DatabaseService contiene las funciones para manipular la bd
+// DatabaseService contiene las funciones para manipular la bd
 type DatabaseService interface {
 	AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error)
 	GetImage(Filename string, imageType string) (int64, error)
 }
 
-//NewImageService inicializa el servicio de basw de datos
+// NewImageService inicializa el servicio de basw de datos
 func NewImageService(imageRepository ImageRepository) DatabaseService {
 	return &dbProperties{imageRepository}
 }
 
 func (properties *dbProperties) AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
-
 	size, err := properties.imageRepository.AddFile(image, imageFilename, operation)
 	if err != nil {
 		return "", errors.New("an error ocurred while storing the file")

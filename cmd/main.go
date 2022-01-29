@@ -43,7 +43,7 @@ import (
 //go:generate swagger generate spec -m -o ../docs/swagger.yml
 
 func main() {
-	p := properties.MustLoadFile("app/app.properties", properties.UTF8)
+	p := properties.MustLoadFile("cmd/app.properties", properties.UTF8)
 
 	host := p.MustGetString("host")
 	databaseHost := p.MustGetString("database_host")
@@ -51,5 +51,4 @@ func main() {
 	configuration := server.Server{}
 	configuration.InitHTTPServer(databaseHost)
 	configuration.Run(host)
-
 }

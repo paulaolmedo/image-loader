@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	data "image-loader/models"
+	data "image-loader/internal/models"
 	server "image-loader/server"
 
 	"github.com/go-resty/resty/v2"
@@ -17,8 +17,10 @@ import (
 // hacer una base de datos de "prueba"
 const mongoURL = "mongodb://localhost:27017"
 
-var testserver *httptest.Server
-var testConfiguration server.Server
+var (
+	testserver        *httptest.Server
+	testConfiguration server.Server
+)
 
 func TestMain(test *testing.M) {
 	InitService()
@@ -48,11 +50,14 @@ func InitProcessedImage(imageFilename string, resultsFileName string) data.Proce
 	ndwi := []float64{1.0, 1.0}
 	normIndexes := data.NormalizedIndexes{Ndvi: ndvi, Ndwi: ndwi}
 
-	return data.ProcessedSatelliteImage{ImageFilename: imageFilename,
+	return data.ProcessedSatelliteImage{
+		ImageFilename:         imageFilename,
 		ResultsFilename:       resultsFileName,
 		GeographicInformation: geoData,
-		NormalizedIndexes:     normIndexes}
+		NormalizedIndexes:     normIndexes,
+	}
 }
+
 func TestLoadRawImage(t *testing.T) {
 	rawImage := InitRawImage("./test_image.tif")
 	client := resty.New()
@@ -64,7 +69,7 @@ func TestLoadRawImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	//4940427
+	// 4940427
 	actualResponse := string(response.Body())
 	expectedResponse := "\"Bytes written while storing raw image: 4940427. \"\n"
 
@@ -186,10 +191,10 @@ func TestLoadProcessedImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	//actualResponse := string(response.Body())
-	//expectedResponse := "\"Bytes written while storing processed image: 4940427. Bytes written while storing results image: 11588. Id of the stored results: ObjectID(\\\"6138a617c154acb25e2d3db3\\\")\"\n"
+	// actualResponse := string(response.Body())
+	// expectedResponse := "\"Bytes written while storing processed image: 4940427. Bytes written while storing results image: 11588. Id of the stored results: ObjectID(\\\"6138a617c154acb25e2d3db3\\\")\"\n"
 
-	//assert.Equal(t, expectedResponse, actualResponse)
+	// assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, response.StatusCode(), http.StatusCreated)
 	t.Logf("image correctly stored")
 }

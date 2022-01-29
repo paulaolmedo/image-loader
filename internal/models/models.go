@@ -62,8 +62,8 @@ type NormalizedIndexes struct {
 //
 // swagger:model
 type ModelError struct {
-	//código de error
+	// código de error
 	Code string `json:"code"`
-	//mensaje
+	// mensaje
 	Message string `json:"message"`
 }

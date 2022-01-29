@@ -118,7 +118,8 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 	db := dao.mongoClient.Database(rawDatabase)
 	fsFiles := db.Collection(filesCollection)
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	var results bson.M
 	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)
@@ -192,7 +193,8 @@ func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
 	db := dao.mongoClient.Database(processedImagesDatabase)
 	fsFiles := db.Collection(filesCollection)
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	var results bson.M
 	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)

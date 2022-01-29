@@ -43,7 +43,7 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 func (properties *dbProperties) AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
 	size, err := properties.imageRepository.AddFile(image, imageFilename, operation)
 	if err != nil {
-		return "", errors.New("an error ocurred while storing the file")
+		return "", err
 	}
 
 	response := "Bytes written while storing %v image: %v. "
@@ -51,7 +51,7 @@ func (properties *dbProperties) AddImage(image []byte, imageFilename string, ope
 	if operation == "results" {
 		result, err := properties.imageRepository.AddProcessedImageData(imageProperties...)
 		if err != nil {
-			return "", errors.New("an error ocurred while storing the processed image data")
+			return "", err
 		}
 
 		response += "Id of the stored results: " + result
@@ -66,13 +66,13 @@ func (properties *dbProperties) GetImage(Filename string, imageType string) (int
 	case "raw":
 		size, err := properties.imageRepository.GetRawImage(Filename)
 		if err != nil {
-			return 0, errors.New("an error ocurred while retrieving the raw image")
+			return 0, err
 		}
 		return size, nil
 	case "processed":
 		size, err := properties.imageRepository.GetProcessedImage(Filename)
 		if err != nil {
-			return 0, errors.New("an error ocurred while retrieving the raw image")
+			return 0, err
 		}
 		return size, nil
 	default:

@@ -4,13 +4,13 @@ services:
   mongo:
     image: mongo
     ports:
-        - "27018:27018"
+        - "27017:27017"
     volumes:
         - ./db:/data/db
     networks:
         - localhost
   app:
-    image: image-loader
+    image: paulabeatrizolmedo/image-loader
     ports:
       - "8080:8080"
     restart: unless-stopped  

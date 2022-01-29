@@ -1,15 +1,12 @@
 # Image loader 🛰️
 
-All the generated endpoints come from [design.go](https://github.com/paulaolmedo/image-loader/blob/dev/design/design.go). In case of make changes, to recompile use:
-```
-goa gen image-loader/design
 ```
 ## how it works
 
 ### with 🐳
 Build the docker image:
  ```
- docker build -f ci/Dockerfile -t image-loader .
+ docker build -f ci/Dockerfile -t paulabeatrizolmedo/image-loader .
  ```
  
  And then run the compose:

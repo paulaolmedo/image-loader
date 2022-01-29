@@ -101,7 +101,7 @@ func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int
 	)
 	// error opening upload stream
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	defer uploadStream.Close()
 

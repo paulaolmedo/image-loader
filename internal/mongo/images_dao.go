@@ -110,6 +110,7 @@ func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int
 	if err != nil {
 		return 0, err
 	}
+
 	return fileSize, nil
 }
 
@@ -128,9 +129,11 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 		return 0, err
 	}
 
-	bucket, _ := gridfs.NewBucket(
-		db,
-	)
+	bucket, err := gridfs.NewBucket(db)
+	if err != nil {
+		return 0, err
+	}
+
 	var buf bytes.Buffer
 	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
 	// error downloading result
@@ -203,9 +206,11 @@ func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
 		return 0, err
 	}
 
-	bucket, _ := gridfs.NewBucket(
-		db,
-	)
+	bucket, err := gridfs.NewBucket(db)
+	if err != nil {
+		return 0, err
+	}
+
 	var buf bytes.Buffer
 	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
 	// error downloading result

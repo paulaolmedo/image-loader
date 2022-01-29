@@ -20,7 +20,7 @@ const (
 	errorReadingJSON      = "Error reading JSON data."
 	errorReadingFilename  = "Unsuported filename."
 	errorReadingFileData  = "Error reading data image %v"
-	errorStoringImage     = "Error storing image."
+	errorStoringImage     = "Error storing image: %v."
 	errorStoringDataImage = "Error storing data image."
 	errorRetrievingData   = "Error retrieving %v image."
 
@@ -30,7 +30,7 @@ const (
 )
 
 // jsonResponse builds the endpoints response
-func jsonResponse(w http.ResponseWriter, statusCode int, response interface{}) {
+func jsonResponse(w http.ResponseWriter, statusCode int, response ...interface{}) {
 	w.WriteHeader(statusCode)
 
 	err := json.NewEncoder(w).Encode(response)

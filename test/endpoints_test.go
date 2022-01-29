@@ -71,7 +71,7 @@ func TestLoadRawImage(t *testing.T) {
 
 	// 4940427
 	actualResponse := string(response.Body())
-	expectedResponse := "\"Bytes written while storing raw image: 4940427. \"\n"
+	expectedResponse := "[\"Bytes written while storing raw image: 4940427. \"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, response.StatusCode(), http.StatusCreated)
@@ -91,7 +91,7 @@ func TestGetRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	expectedResponse := "\"Bytes read: 4940427. \"\n"
+	expectedResponse := "[\"Bytes read: 4940427. \"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusOK, response.StatusCode())
@@ -111,7 +111,7 @@ func TestGetNonExistentRawImage(t *testing.T) {
 
 	actualResponse := string(response.Body())
 	// TODO cuando no encuentra la imagen debería devolver 404
-	expectedResponse := "\"Error retrieving raw image\"\n"
+	expectedResponse := "[\"Error retrieving raw image\"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())
@@ -160,7 +160,7 @@ func TestGetErronousRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	expectedResponse := "\"Unsuported filename.\"\n"
+	expectedResponse := "[\"Unsuported filename.\"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusConflict, response.StatusCode())
@@ -241,7 +241,7 @@ func TestGetInvalidProcessedImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	expectedResponse := "\"Unsuported filename.\"\n"
+	expectedResponse := "[\"Unsuported filename.\"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusConflict, response.StatusCode())

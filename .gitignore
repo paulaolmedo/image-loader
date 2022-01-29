@@ -5,9 +5,5 @@
 *.out
 *.html
 
-# image files
-*.csv
-*.tif
-
 # license templates
 *.tmpl

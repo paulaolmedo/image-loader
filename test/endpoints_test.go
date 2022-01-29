@@ -15,7 +15,7 @@ import (
 )
 
 // hacer una base de datos de "prueba"
-const mongoURL = "mongodb://localhost:27017"
+const mongoURL = "mongodb://mongo"
 
 var (
 	testserver        *httptest.Server

@@ -24,6 +24,10 @@ import (
 	processed_images "image-loader/internal/models"
 )
 
+const (
+	errorRetrievingImage = "error retrieving %v image: %v"
+)
+
 // properties of the database service
 type dbProperties struct {
 	imageRepository ImageRepository
@@ -66,17 +70,18 @@ func (properties *dbProperties) GetImage(Filename string, imageType string) (int
 	case "raw":
 		size, err := properties.imageRepository.GetRawImage(Filename)
 		if err != nil {
-			return 0, err
+			errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
+			return 0, errorMessage
 		}
 		return size, nil
 	case "processed":
 		size, err := properties.imageRepository.GetProcessedImage(Filename)
 		if err != nil {
-			return 0, err
+			errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
+			return 0, errorMessage
 		}
 		return size, nil
 	default:
 		return 0, errors.New("wrong image type selected")
-
 	}
 }

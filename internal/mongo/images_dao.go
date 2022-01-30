@@ -125,27 +125,23 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 	var results bson.M
 	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)
 	if err != nil {
-		msg := fmt.Errorf("128 %v", err)
-		return 0, msg
+		return 0, err
 	}
 
 	bucket, err := gridfs.NewBucket(db)
 	if err != nil {
-		msg := fmt.Errorf("134 %v", err)
-		return 0, msg
+		return 0, err
 	}
 
 	var buf bytes.Buffer
 	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
 	if err != nil {
-		msg := fmt.Errorf("141 %v", err)
-		return 0, msg
+		return 0, err
 	}
 
 	err = ioutil.WriteFile(Filename, buf.Bytes(), 0o777)
 	if err != nil {
-		msg := fmt.Errorf("147 %v", err)
-		return 0, msg
+		return 0, err
 	}
 
 	return dStream, nil

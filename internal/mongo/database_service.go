@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	errorRetrievingImage = "error retrieving %v image: %v"
+	errorRetrievingImage = "error retrieving image: %v"
 )
 
 // properties of the database service
@@ -81,7 +81,7 @@ func (properties *dbProperties) GetImage(filename string, imageType string) (int
 	}
 
 	if err != nil {
-		errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
+		errorMessage := fmt.Errorf(errorRetrievingImage, err)
 		return 0, errorMessage
 	}
 

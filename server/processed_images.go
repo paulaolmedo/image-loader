@@ -68,7 +68,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 	if image != nil {
 		responseFromImage, err = s.Database.AddImage(image, imageFilename, "processed")
 		if err != nil {
-			jsonResponse(w, http.StatusInternalServerError, errorStoringImage, err)
+			jsonResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 	}
@@ -76,7 +76,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 	// agrega los resultados del procesamiento (esto sí que tiene que hacerse si o si)
 	responseFromResults, err := s.Database.AddImage(results, resultsFilename, "results", &imageProperties)
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, errorStoringImage, err)
+		jsonResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 

@@ -43,10 +43,9 @@ const (
 // ImageRepository to manage the db access
 type ImageRepository interface {
 	AddFile(file []byte, filename string, fileType string) (int, error)
-	AddProcessedImage(originalFile []byte, Filename string) (int, error) // esta habría que deprecarla
 	AddProcessedImageData(image ...*processed_images.ProcessedSatelliteImage) (string, error)
-	GetRawImage(Filename string) (int64, error)
-	GetProcessedImage(Filename string) (int64, error)
+	GetRawImage(filename string) (int64, error)
+	GetProcessedImage(filename string) (int64, error)
 }
 
 // ImageDao to operate with the image objects
@@ -64,6 +63,7 @@ func InitiateImageDao(url string) (*ImageDao, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	dao := ImageDao{mongoClient: client}
 	return &dao, nil
 }
@@ -99,14 +99,12 @@ func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int
 	uploadStream, err := bucket.OpenUploadStream(
 		filename,
 	)
-	// error opening upload stream
 	if err != nil {
 		return 0, err
 	}
 	defer uploadStream.Close()
 
 	fileSize, err := uploadStream.Write(file)
-	// error writing stream
 	if err != nil {
 		return 0, err
 	}
@@ -115,7 +113,7 @@ func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int
 }
 
 // GetRawImage test
-func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
+func (dao *ImageDao) GetRawImage(filename string) (int64, error) {
 	db := dao.mongoClient.Database(rawDatabase)
 	fsFiles := db.Collection(filesCollection)
 
@@ -134,12 +132,12 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 	}
 
 	var buf bytes.Buffer
-	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
+	dStream, err := bucket.DownloadToStreamByName(filename, &buf)
 	if err != nil {
 		return 0, err
 	}
 
-	err = ioutil.WriteFile(Filename, buf.Bytes(), 0o777)
+	err = ioutil.WriteFile(filename, buf.Bytes(), 0o777)
 	if err != nil {
 		return 0, err
 	}
@@ -161,35 +159,8 @@ func (dao *ImageDao) AddProcessedImageData(image ...*processed_images.ProcessedS
 	return fmt.Sprintf("%s", result.InsertedID), err
 }
 
-// AddProcessedImage new processed image to the database
-// TODO parametrizar y que sea un sólo método para las dos cosas
-func (dao *ImageDao) AddProcessedImage(originalFile []byte, Filename string) (int, error) {
-	bucket, err := gridfs.NewBucket(
-		dao.mongoClient.Database(processedImagesDatabase),
-	)
-	// error opening database connection
-	if err != nil {
-		return 0, err
-	}
-	uploadStream, err := bucket.OpenUploadStream(
-		Filename,
-	)
-	// error opening upload stream
-	if err != nil {
-		return 0, nil
-	}
-	defer uploadStream.Close()
-
-	fileSize, err := uploadStream.Write(originalFile)
-	// error writing stream
-	if err != nil {
-		return 0, err
-	}
-	return fileSize, nil
-}
-
 // GetProcessedImage test
-func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
+func (dao *ImageDao) GetProcessedImage(filename string) (int64, error) {
 	db := dao.mongoClient.Database(processedImagesDatabase)
 	fsFiles := db.Collection(filesCollection)
 
@@ -198,7 +169,6 @@ func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
 
 	var results bson.M
 	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)
-	// error decoding results
 	if err != nil {
 		return 0, err
 	}
@@ -209,17 +179,15 @@ func (dao *ImageDao) GetProcessedImage(Filename string) (int64, error) {
 	}
 
 	var buf bytes.Buffer
-	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
-	// error downloading result
+	dStream, err := bucket.DownloadToStreamByName(filename, &buf)
 	if err != nil {
 		return 0, err
 	}
 
-	err = ioutil.WriteFile(Filename, buf.Bytes(), 0o777)
-	// error writing file
+	err = ioutil.WriteFile(filename, buf.Bytes(), 0o777)
 	if err != nil {
 		return 0, err
 	}
-	// alles gut
+
 	return dStream, nil
 }

@@ -25,7 +25,9 @@ import (
 )
 
 const (
-	errorRetrievingImage = "error retrieving image: %v"
+	errorRetrievingImage  = "error retrieving image: %v"
+	errorStoringImage     = "error storing image: %v"
+	errorStoringDataImage = "error storing data image: %v"
 )
 
 // properties of the database service
@@ -47,7 +49,8 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 func (properties *dbProperties) AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
 	size, err := properties.imageRepository.AddFile(image, imageFilename, operation)
 	if err != nil {
-		return "", err
+		msg := fmt.Errorf(errorStoringImage, err)
+		return "", msg
 	}
 
 	response := "Bytes written while storing %v image: %v. "
@@ -55,7 +58,8 @@ func (properties *dbProperties) AddImage(image []byte, imageFilename string, ope
 	if operation == "results" {
 		result, err := properties.imageRepository.AddProcessedImageData(imageProperties...)
 		if err != nil {
-			return "", err
+			msg := fmt.Errorf(errorStoringDataImage, err)
+			return "", msg
 		}
 
 		response += "Id of the stored results: " + result

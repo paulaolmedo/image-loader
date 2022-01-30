@@ -16,27 +16,39 @@
 //You should have received a copy of the GNU General Public License
 //along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-package server
+// Image loader
+//
+// @wip description
+//
+//     Schemes: http
+//     Host: 0.0.0.0:8080
+//	   BasePath: /
+//     Version: 1.0.0
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
+package main
 
- import (
-	 "log"
-	 "net/http"
-	 "time"
- )
- 
- func Logger(inner http.Handler, name string) http.Handler {
-	 return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		 start := time.Now()
- 
-		 inner.ServeHTTP(w, r)
- 
-		 log.Printf(
-			 "%s %s %s %s",
-			 r.Method,
-			 r.RequestURI,
-			 name,
-			 time.Since(start),
-		 )
-	 })
- }
- 
+import (
+	server "image-loader/server"
+
+	"github.com/magiconair/properties"
+)
+
+//go:generate swagger generate spec -m -o ../docs/swagger.yml
+
+func main() {
+	p := properties.MustLoadFile("app.properties", properties.UTF8)
+
+	host := p.MustGetString("host")
+	databaseHost := p.MustGetString("database_host")
+
+	configuration := server.Server{}
+	configuration.InitHTTPServer(databaseHost)
+	configuration.Run(host)
+}

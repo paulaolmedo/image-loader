@@ -21,56 +21,63 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	data "image-loader/models"
+	data "image-loader/internal/models"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 	var imageProperties data.RawSatelliteImage
 
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+		jsonResponse(w, http.StatusBadRequest, errorReadingJSON)
 		return
 	}
 
-	originalFile, err := ioutil.ReadFile(imageProperties.FileName)
+	// le pongo .tif por ahora pero no sé qué tipos de imagen podemos guardar
+	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
+	if !strings.Contains(imageProperties.Filename, tif) {
+		jsonResponse(w, http.StatusConflict, errorReadingFilename)
+		return
+	}
+
+	originalFile, err := ioutil.ReadFile(imageProperties.Filename)
 	if err != nil {
-		description := fmt.Sprintf("Error reading data image %v", err)
+		description := fmt.Sprintf(errorReadingFileData, err)
 		jsonResponse(w, http.StatusBadRequest, description)
 		return
 	}
 
-	bytesWritten, err := s.Database.AddImage(originalFile, imageProperties.FileName, "raw")
+	response, err := s.Database.AddImage(originalFile, imageProperties.Filename, "raw")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error storing image")
+		jsonResponse(w, http.StatusInternalServerError, err.Error())
 		return
-	} //guardo la imagen en sí
+	} // guardo la imagen en sí
 
-	description := fmt.Sprintf("Bytes written %d", bytesWritten)
-	jsonResponse(w, http.StatusCreated, description)
+	jsonResponse(w, http.StatusCreated, response)
 }
 
-//Esto lo tendría que pasar por query params y no por el body
+// Esto lo tendría que pasar por query params y no por el body
 func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set(contentType, appJSON)
 
-	var imageProperties data.RawSatelliteImage
+	queryParams := r.URL.Query()
+	filename := queryParams.Get("filename")
 
-	err := json.NewDecoder(r.Body).Decode(&imageProperties)
-	if err != nil {
-		jsonResponse(w, http.StatusBadRequest, "Error reading JSON data")
+	if !strings.Contains(filename, tif) {
+		jsonResponse(w, http.StatusConflict, errorReadingFilename)
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(imageProperties.FileName, "raw")
+	bytesRead, err := s.Database.GetImage(filename, "raw")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error retrieving raw image")
+		jsonResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	description := fmt.Sprintf("Bytes written %d", bytesRead)
+	description := fmt.Sprintf(bRead, bytesRead)
 	jsonResponse(w, http.StatusOK, description)
 }

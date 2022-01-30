@@ -6,17 +6,20 @@ import (
 	"os"
 	"testing"
 
-	data "image-loader/models"
+	data "image-loader/internal/models"
 	server "image-loader/server"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-const mongoURL = "mongodb://localhost:27017"
+const mongoURL = "mongodb://mongo"
 
-var testserver *httptest.Server
-var testConfiguration server.Server
+var (
+	testserver        *httptest.Server
+	testConfiguration server.Server
+)
 
 func TestMain(test *testing.M) {
 	InitService()
@@ -29,11 +32,11 @@ func InitService() {
 	testserver = httptest.NewServer(testConfiguration.Router)
 }
 
-func InitRawImage(filename string) data.RawSatelliteImage {
-	return data.RawSatelliteImage{FileName: filename}
+func InitRawImage(Filename string) data.RawSatelliteImage {
+	return data.RawSatelliteImage{Filename: Filename}
 }
 
-func InitProcessedImage(filename string) data.ProcessedSatelliteImage {
+func InitProcessedImage(imageFilename string, resultsFileName string) data.ProcessedSatelliteImage {
 	coordinates := map[string]float64{
 		"x_min": -1.0,
 		"y_min": -1.0,
@@ -46,84 +49,199 @@ func InitProcessedImage(filename string) data.ProcessedSatelliteImage {
 	ndwi := []float64{1.0, 1.0}
 	normIndexes := data.NormalizedIndexes{Ndvi: ndvi, Ndwi: ndwi}
 
-	return data.ProcessedSatelliteImage{FileName: filename,
+	return data.ProcessedSatelliteImage{
+		ImageFilename:         imageFilename,
+		ResultsFilename:       resultsFileName,
 		GeographicInformation: geoData,
-		NormalizedIndexes:     normIndexes}
+		NormalizedIndexes:     normIndexes,
+	}
 }
-func TestLoadRawImage(test *testing.T) {
+
+func TestLoadRawImage(t *testing.T) {
 	rawImage := InitRawImage("./test_image.tif")
 	client := resty.New()
 
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/raw-images")
+		Post(testserver.URL + "/images/raw")
 
-	if err != nil {
-		test.Errorf("Error while calling endpoint: %v", err.Error())
-	}
-	//4940427
-	data := string(response.Body())
-	if err != nil {
-		test.Errorf("Error converting data: %v", err.Error())
-	}
+	require.NoError(t, err)
 
-	assert.Equal(test, data, "\"Bytes written 4940427\"\n")
-	assert.Equal(test, response.StatusCode(), http.StatusCreated)
-	test.Logf("image correctly stored")
+	// 4940427
+	actualResponse := string(response.Body())
+	expectedResponse := "[\"Bytes written while storing raw image: 4940427. \"]\n"
 
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, response.StatusCode(), http.StatusCreated)
+	t.Logf("image correctly stored")
 }
 
-func TestLoadNonExistentRawImage(test *testing.T) {
+func TestGetRawImage(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetQueryParams(map[string]string{
+			"filename": "./test_image.tif",
+		}).
+		EnableTrace().
+		Get(testserver.URL + "/images/raw")
+
+	require.NoError(t, err)
+
+	actualResponse := string(response.Body())
+	expectedResponse := "[\"Bytes read: 4940427. \"]\n"
+
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+}
+
+func TestGetNonExistentRawImage(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetQueryParams(map[string]string{
+			"filename": "./non_existent_file.tif",
+		}).
+		EnableTrace().
+		Get(testserver.URL + "/images/raw")
+
+	require.NoError(t, err)
+
+	actualResponse := string(response.Body())
+	// TODO cuando no encuentra la imagen debería devolver 404
+	expectedResponse := "[\"error retrieving image: file with given parameters not found\"]\n"
+
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())
+}
+
+func TestLoadNonExistentRawImage(t *testing.T) {
 	rawImage := InitRawImage("./non_existent_file.tif")
 	client := resty.New()
 
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/raw-images")
+		Post(testserver.URL + "/images/raw")
 
-	if err != nil {
-		test.Errorf("Error while calling endpoint: %v", err.Error())
-	}
+	require.NoError(t, err)
 
-	assert.Equal(test, http.StatusBadRequest, response.StatusCode())
-	test.Logf("no such image! error reading data")
-
+	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	t.Logf("no such image! error reading data")
 }
 
-func TestLoadProcessedImage(test *testing.T) {
-	rawImage := InitProcessedImage("./test_image.tif")
+func TestLoadErronousRawImage(t *testing.T) {
+	rawImage := InitRawImage("./non_existent_file.someotherextension")
 	client := resty.New()
 
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/processed-images")
+		Post(testserver.URL + "/images/raw")
 
-	if err != nil {
-		test.Errorf("Error while calling endpoint: %v", err.Error())
-	}
+	require.NoError(t, err)
 
-	assert.Equal(test, response.StatusCode(), http.StatusCreated)
-	test.Logf("image correctly stored")
-
+	assert.Equal(t, http.StatusConflict, response.StatusCode())
+	t.Logf("did not recognized file extension")
 }
 
-func TestLoadNonExistentProcessedImage(test *testing.T) {
-	rawImage := InitProcessedImage("./non_existent_file.tif")
+func TestGetErronousRawImage(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetQueryParams(map[string]string{
+			"filename": "./non_existent_file.someotherextension",
+		}).
+		EnableTrace().
+		Get(testserver.URL + "/images/raw")
+
+	require.NoError(t, err)
+
+	actualResponse := string(response.Body())
+	expectedResponse := "[\"Unsuported filename.\"]\n"
+
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, http.StatusConflict, response.StatusCode())
+}
+
+func TestLoadRawImageWithEmptyBody(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(nil).
+		EnableTrace().
+		Post(testserver.URL + "/images/raw")
+
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	t.Logf("invalid body")
+}
+
+func TestLoadProcessedImage(t *testing.T) {
+	rawImage := InitProcessedImage("./test_image.tif", "./processing_results.csv")
 	client := resty.New()
 
 	response, err := client.R().
 		SetBody(rawImage).
 		EnableTrace().
-		Post(testserver.URL + "/processed-images")
+		Post(testserver.URL + "/images/processed")
 
-	if err != nil {
-		test.Errorf("Error while calling endpoint: %v", err.Error())
-	}
+	require.NoError(t, err)
 
-	assert.Equal(test, http.StatusBadRequest, response.StatusCode())
-	test.Logf("no such image! error reading data")
+	// actualResponse := string(response.Body())
+	// expectedResponse := "\"Bytes written while storing processed image: 4940427. Bytes written while storing results image: 11588. Id of the stored results: ObjectID(\\\"6138a617c154acb25e2d3db3\\\")\"\n"
 
+	// assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, response.StatusCode(), http.StatusCreated)
+	t.Logf("image correctly stored")
+}
+
+func TestLoadProcessedImageWithEmptyBody(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(nil).
+		EnableTrace().
+		Post(testserver.URL + "/images/processed")
+
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	t.Logf("invalid body")
+}
+
+func TestLoadNonExistentProcessedImage(t *testing.T) {
+	rawImage := InitProcessedImage("./non_existent_file.tif", "")
+	client := resty.New()
+
+	response, err := client.R().
+		SetBody(rawImage).
+		EnableTrace().
+		Post(testserver.URL + "/images/processed")
+
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	t.Logf("no such image! error reading data")
+}
+
+func TestGetInvalidProcessedImage(t *testing.T) {
+	client := resty.New()
+
+	response, err := client.R().
+		SetQueryParams(map[string]string{
+			"filename": "./processing_results.someotherextension",
+		}).
+		EnableTrace().
+		Get(testserver.URL + "/images/processed")
+
+	require.NoError(t, err)
+
+	actualResponse := string(response.Body())
+	expectedResponse := "[\"Unsuported filename.\"]\n"
+
+	assert.Equal(t, expectedResponse, actualResponse)
+	assert.Equal(t, http.StatusConflict, response.StatusCode())
 }

@@ -1,0 +1,9 @@
+# config files
+.vscode
+
+# coverage files
+*.out
+*.html
+
+# license templates
+*.tmpl

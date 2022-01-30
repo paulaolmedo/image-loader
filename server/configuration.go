@@ -23,7 +23,7 @@ import (
 	"log"
 	"net/http"
 
-	mongo "image-loader/mongo"
+	mongo "image-loader/internal/mongo"
 
 	mux "github.com/gorilla/mux"
 	cors "github.com/rs/cors"
@@ -35,7 +35,7 @@ type Server struct {
 	Database mongo.DatabaseService
 }
 
-//Init configuration
+// Init configuration
 func (serverConfiguration *Server) InitHTTPServer(databasepath string) {
 	serverConfiguration.InitDatabase(databasepath)
 	serverConfiguration.Router = mux.NewRouter()
@@ -50,37 +50,175 @@ func (serverConfiguration *Server) InitHTTPServer(databasepath string) {
 	})
 }
 
-//Run .
+// Run .
 func (serverConfiguration *Server) Run(host string) {
 	fmt.Println("Listening to:", host)
 	handler := cors.Default().Handler(serverConfiguration.Router)
 	log.Fatal(http.ListenAndServe(host, handler))
 }
 
-//InitRouters .
+// InitRouters .
 func (serverConfiguration *Server) InitRouters() {
-	serverConfiguration.Router.HandleFunc("/raw-images", SetMiddlewareJSON(serverConfiguration.LoadNewRawSatelliteImage)).Methods("POST")
-	serverConfiguration.Router.HandleFunc("/raw-images", SetMiddlewareJSON(serverConfiguration.GetRawSatelliteImage)).Methods("GET")
-	serverConfiguration.Router.HandleFunc("/processed-images", SetMiddlewareJSON(serverConfiguration.LoadNewProcessedSatelliteImage)).Methods("POST")
-	serverConfiguration.Router.HandleFunc("/processed-images", SetMiddlewareJSON(serverConfiguration.GetProcessedSatelliteImage)).Methods("GET")
+	// swagger:operation POST /images/raw LoadNewRawSatelliteImage
+	//
+	// Load new raw image
+	//
+	// @WIP
+	//
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - in: body
+	//   name: raw satellite image
+	//   description: Image information
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/RawSatelliteImage"
+	// responses:
+	//   '200':
+	//     description: Raw image details (bytes written into the database)
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/RawSatelliteImage"
+	//   '409':
+	//     description: Raw image already exists
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	//   '500':
+	//     description: Internal Server Error
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	serverConfiguration.Router.HandleFunc("/images/raw", SetMiddlewareJSON(serverConfiguration.LoadNewRawSatelliteImage)).Methods("POST")
 
+	// swagger:operation GET /images/raw/{filename} GetRawSatelliteImage
+	//
+	// Retrieve raw image
+	//
+	// @WIP
+	//
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - in: path
+	//   name: filename
+	//   description: raw image identification
+	//   required: true
+	//   type: string
+	// responses:
+	//   '200':
+	//     description: Raw image details (bytes written to local storage)
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/RawSatelliteImage"
+	//   '409':
+	//     description: I/O conflict while writting to local storage
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	//   '500':
+	//     description: Internal Server Error
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	serverConfiguration.Router.HandleFunc("/images/raw", SetMiddlewareJSON(serverConfiguration.GetRawSatelliteImage)).Methods("GET")
+
+	// swagger:operation POST /images/processed LoadNewProcessedSatelliteImage
+	//
+	// Load new processed image
+	//
+	// @WIP
+	//
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - in: body
+	//   name: processed satellite image
+	//   description: Image information
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/ProcessedSatelliteImage"
+	// responses:
+	//   '200':
+	//     description: Processed image details (bytes written into the database)
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ProcessedSatelliteImage"
+	//   '409':
+	//     description: Processed image already exists
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	//   '500':
+	//     description: Internal Server Error
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	serverConfiguration.Router.HandleFunc("/images/processed", SetMiddlewareJSON(serverConfiguration.LoadNewProcessedSatelliteImage)).Methods("POST")
+
+	// swagger:operation GET /images/processed/{filename} GetProcessedSatelliteImage
+	//
+	// Retrieve processed image
+	//
+	// @WIP
+	//
+	// ---
+	// produces:
+	// - application/json
+	// parameters:
+	// - in: path
+	//   name: filename
+	//   description: processed image identification
+	//   required: true
+	//   type: string
+	// responses:
+	//   '200':
+	//     description: processed image details (bytes written to local storage)
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ProcessedSatelliteImage"
+	//   '409':
+	//     description: I/O conflict while writting to local storage
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	//   '500':
+	//     description: Internal Server Error
+	//     schema:
+	//       type: array
+	//       items:
+	//         "$ref": "#/definitions/ModelError"
+	serverConfiguration.Router.HandleFunc("/images/processed", SetMiddlewareJSON(serverConfiguration.GetProcessedSatelliteImage)).Methods("GET")
 }
 
-//InitDatabase .
+// InitDatabase .
 func (serverConfiguration *Server) InitDatabase(databasepath string) {
 	imageDao, err := mongo.InitiateImageDao(databasepath)
-
 	if err != nil {
-		log.Fatalf("failed to connect %v ", err)
+		log.Fatalf(connectionError, err)
 	}
 	serverConfiguration.Database = mongo.NewImageService(imageDao)
-
 }
 
-//SetMiddlewareJSON .
+// SetMiddlewareJSON .
 func SetMiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentType, appJSON)
 		next(w, r)
 	}
 }

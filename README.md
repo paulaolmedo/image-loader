@@ -1,17 +1,12 @@
 # Image loader 🛰️
 
-## status
-
-[![Tests](https://github.com/paulaolmedo/image-loader/actions/workflows/go.yml/badge.svg)](https://github.com/paulaolmedo/image-loader/actions/workflows/go.yml)
-
-[![Build docker image](https://github.com/paulaolmedo/image-loader/actions/workflows/docker.yml/badge.svg)](https://github.com/paulaolmedo/image-loader/actions/workflows/docker.yml)
-
+```
 ## how it works
 
 ### with 🐳
 Build the docker image:
  ```
- docker build -f ci/Dockerfile -t image-loader .
+ docker build -f ci/Dockerfile -t paulabeatrizolmedo/image-loader .
  ```
  
  And then run the compose:
@@ -23,7 +18,7 @@ Build the docker image:
 ### without docker ⚒️
 Then, to build the application run:
  ```
- go build -o image-loader main.go
+ go build -o image-loader image-loader/cmd/image-loader-api
  ```
 
 And finally:

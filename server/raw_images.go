@@ -75,7 +75,8 @@ func (s *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 
 	bytesRead, err := s.Database.GetImage(filename, "raw")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, err)
+		msg := fmt.Errorf("error %v", err)
+		jsonResponse(w, http.StatusInternalServerError, msg)
 		return
 	}
 

@@ -65,23 +65,25 @@ func (properties *dbProperties) AddImage(image []byte, imageFilename string, ope
 	return description, nil
 }
 
-func (properties *dbProperties) GetImage(Filename string, imageType string) (int64, error) {
+func (properties *dbProperties) GetImage(filename string, imageType string) (int64, error) {
+	var err error
+	var size int64
+
 	switch imageType {
 	case "raw":
-		size, err := properties.imageRepository.GetRawImage(Filename)
-		if err != nil {
-			errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
-			return 0, errorMessage
-		}
-		return size, nil
+		size, err = properties.imageRepository.GetRawImage(filename)
+
 	case "processed":
-		size, err := properties.imageRepository.GetProcessedImage(Filename)
-		if err != nil {
-			errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
-			return 0, errorMessage
-		}
-		return size, nil
+		size, err = properties.imageRepository.GetProcessedImage(filename)
+
 	default:
-		return 0, errors.New("wrong image type selected")
+		err = errors.New("wrong image type selected")
 	}
+
+	if err != nil {
+		errorMessage := fmt.Errorf(errorRetrievingImage, imageType, err)
+		return 0, errorMessage
+	}
+
+	return size, nil
 }

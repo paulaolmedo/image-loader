@@ -120,32 +120,32 @@ func (dao *ImageDao) GetRawImage(Filename string) (int64, error) {
 	fsFiles := db.Collection(filesCollection)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	if cancel != nil {
-		msg := fmt.Errorf("connection timed out %v", cancel)
-		return 0, msg
-	}
 	defer cancel()
 
 	var results bson.M
 	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)
 	if err != nil {
-		return 0, err
+		msg := fmt.Errorf("128 %v", err)
+		return 0, msg
 	}
 
 	bucket, err := gridfs.NewBucket(db)
 	if err != nil {
-		return 0, err
+		msg := fmt.Errorf("134 %v", err)
+		return 0, msg
 	}
 
 	var buf bytes.Buffer
 	dStream, err := bucket.DownloadToStreamByName(Filename, &buf)
 	if err != nil {
-		return 0, err
+		msg := fmt.Errorf("141 %v", err)
+		return 0, msg
 	}
 
 	err = ioutil.WriteFile(Filename, buf.Bytes(), 0o777)
 	if err != nil {
-		return 0, err
+		msg := fmt.Errorf("147 %v", err)
+		return 0, msg
 	}
 
 	return dStream, nil

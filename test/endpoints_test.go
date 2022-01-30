@@ -111,7 +111,7 @@ func TestGetNonExistentRawImage(t *testing.T) {
 
 	actualResponse := string(response.Body())
 	// TODO cuando no encuentra la imagen debería devolver 404
-	expectedResponse := "[\"error retrieving raw image: 141 file with given parameters not found\"]\n"
+	expectedResponse := "[\"error retrieving raw image: file with given parameters not found\"]\n"
 
 	assert.Equal(t, expectedResponse, actualResponse)
 	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())

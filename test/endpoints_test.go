@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const mongoURL = "mongodb://mongo"
+const mongoURL = "mongodb://localhost:27017"
 
 var (
 	testserver        *httptest.Server
@@ -72,8 +72,11 @@ func TestLoadRawImage(t *testing.T) {
 	actualResponse := string(response.Body())
 	expectedResponse := "[\"Bytes written while storing raw image: 4940427. \"]\n"
 
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusCreated
+
 	assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, response.StatusCode(), http.StatusCreated)
+	assert.Equal(t, actualStatusCode, expectedStatusCode)
 	t.Logf("image correctly stored")
 }
 
@@ -92,8 +95,11 @@ func TestGetRawImage(t *testing.T) {
 	actualResponse := string(response.Body())
 	expectedResponse := "[\"Bytes read: 4940427. \"]\n"
 
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusOK
+
 	assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 }
 
 func TestGetNonExistentRawImage(t *testing.T) {
@@ -109,11 +115,13 @@ func TestGetNonExistentRawImage(t *testing.T) {
 	require.NoError(t, err)
 
 	actualResponse := string(response.Body())
-	// TODO cuando no encuentra la imagen debería devolver 404
 	expectedResponse := "[\"error retrieving image: file with given parameters not found\"]\n"
 
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusInternalServerError
+
 	assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, http.StatusInternalServerError, response.StatusCode())
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 }
 
 func TestLoadNonExistentRawImage(t *testing.T) {
@@ -127,7 +135,10 @@ func TestLoadNonExistentRawImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusBadRequest
+
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 	t.Logf("no such image! error reading data")
 }
 
@@ -142,7 +153,10 @@ func TestLoadErronousRawImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusConflict, response.StatusCode())
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusConflict
+
+	assert.Equal(t, actualStatusCode, expectedStatusCode)
 	t.Logf("did not recognized file extension")
 }
 
@@ -161,8 +175,11 @@ func TestGetErronousRawImage(t *testing.T) {
 	actualResponse := string(response.Body())
 	expectedResponse := "[\"Unsuported filename.\"]\n"
 
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusConflict
+
 	assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, http.StatusConflict, response.StatusCode())
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 }
 
 func TestLoadRawImageWithEmptyBody(t *testing.T) {
@@ -175,7 +192,10 @@ func TestLoadRawImageWithEmptyBody(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusBadRequest
+
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 	t.Logf("invalid body")
 }
 
@@ -190,11 +210,10 @@ func TestLoadProcessedImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	// actualResponse := string(response.Body())
-	// expectedResponse := "\"Bytes written while storing processed image: 4940427. Bytes written while storing results image: 11588. Id of the stored results: ObjectID(\\\"6138a617c154acb25e2d3db3\\\")\"\n"
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusCreated
 
-	// assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, response.StatusCode(), http.StatusCreated)
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 	t.Logf("image correctly stored")
 }
 
@@ -208,7 +227,10 @@ func TestLoadProcessedImageWithEmptyBody(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusBadRequest
+
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 	t.Logf("invalid body")
 }
 
@@ -223,7 +245,10 @@ func TestLoadNonExistentProcessedImage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusBadRequest, response.StatusCode())
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusBadRequest
+
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 	t.Logf("no such image! error reading data")
 }
 
@@ -242,6 +267,9 @@ func TestGetInvalidProcessedImage(t *testing.T) {
 	actualResponse := string(response.Body())
 	expectedResponse := "[\"Unsuported filename.\"]\n"
 
+	actualStatusCode := response.StatusCode()
+	expectedStatusCode := http.StatusConflict
+
 	assert.Equal(t, expectedResponse, actualResponse)
-	assert.Equal(t, http.StatusConflict, response.StatusCode())
+	assert.Equal(t, expectedStatusCode, actualStatusCode)
 }

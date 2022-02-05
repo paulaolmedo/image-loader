@@ -26,3 +26,6 @@ test:
   image: golang:latest
   script:
     - go test -race $(go list ./... | grep -v /vendor/)
+
+include:
+  - template: Code-Quality.gitlab-ci.yml

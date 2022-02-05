@@ -13,7 +13,9 @@ before_script:
 stages:
   - lint
   - test
-  - code_quality
+
+include:
+  - template: Code-Quality.gitlab-ci.yml
 
 linting:
   stage: lint
@@ -28,10 +30,7 @@ test:
   script:
     - go test -race $(go list ./... | grep -v /vendor/)
 
-include:
-  - template: Code-Quality.gitlab-ci.yml
-
 code_quality:
+  stage: test
   artifacts:
     paths: [gl-code-quality-report.json]
-

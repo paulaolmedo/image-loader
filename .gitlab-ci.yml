@@ -13,6 +13,7 @@ before_script:
 stages:
   - lint
   - test
+  - code_quality
 
 linting:
   stage: lint
@@ -29,3 +30,8 @@ test:
 
 include:
   - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  artifacts:
+    paths: [gl-code-quality-report.json]
+

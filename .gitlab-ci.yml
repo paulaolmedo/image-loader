@@ -33,7 +33,8 @@ test:
   artifacts:
     paths: [coverage.html]
 
-code_quality:
-  stage: test
+code_quality: 
+  variables:
+    CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:0.85.5"
   artifacts:
     paths: [gl-code-quality-report.json]

@@ -41,7 +41,7 @@ const (
 	filesCollection          = "fs.files"
 
 	timeout = 10
-	poolsize = poolsize
+	poolsize = 5
 )
 
 // ImageRepository to manage the db access

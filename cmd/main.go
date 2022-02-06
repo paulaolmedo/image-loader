@@ -36,6 +36,7 @@ package main
 
 import (
 	server "image-loader/server"
+	"log"
 
 	"github.com/magiconair/properties"
 )
@@ -48,7 +49,10 @@ func main() {
 	host := p.MustGetString("host")
 	databaseHost := p.MustGetString("database_host")
 
-	configuration := server.Server{}
-	configuration.InitHTTPServer(databaseHost)
+	var configuration server.Server
+	if err := configuration.InitHTTPServer(databaseHost); err != nil {
+		log.Fatal(err)
+	}
+
 	configuration.Run(host)
 }

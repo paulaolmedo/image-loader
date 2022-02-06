@@ -20,7 +20,6 @@ const (
 	errorReadingJSON     = "Error reading JSON data."
 	errorReadingFilename = "Unsuported filename."
 	errorReadingFileData = "Error reading data image %v"
-	errorRetrievingData  = "Error retrieving %v image."
 
 	// SUCCESS MESSAGES
 	bWritten = "Bytes written: %d. "

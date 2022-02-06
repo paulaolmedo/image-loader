@@ -29,7 +29,7 @@ import (
 
 // LoadNewProcessedSatelliteImage stores a new processed image
 // TODO al iguala que las imágenes no procesadas, controlar el contenido de lo que se está guardando
-func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
+func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 
 	var imageProperties data.ProcessedSatelliteImage
@@ -37,46 +37,44 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusBadRequest, errorReadingJSON)
+		
 		return
 	}
 
 	imageFilename := imageProperties.ImageFilename
 	resultsFilename := imageProperties.ResultsFilename
 
-	var image []byte
-	if imageFilename != "" && strings.Contains(imageFilename, tif) {
-		image, err = ioutil.ReadFile(imageProperties.ImageFilename) // might be empty
-		if err != nil {
-			description := fmt.Sprintf(errorReadingFileData, err)
-			jsonResponse(w, http.StatusBadRequest, description)
-			return
-		}
+	image, errorDescription := checkIfFileIsValid(tif, imageFilename)
+	if errorDescription != "" {
+		jsonResponse(w, http.StatusBadRequest, errorDescription)
+		
+		return
 	}
 
-	var results []byte
-	if resultsFilename != "" && strings.Contains(resultsFilename, csv) {
-		results, err = ioutil.ReadFile(imageProperties.ResultsFilename)
-		if err != nil {
-			description := fmt.Sprintf(errorReadingFileData, err)
-			jsonResponse(w, http.StatusBadRequest, description)
-			return
-		}
+	// revisar esto porque los resultados siempre deberían estar
+	results, errorDescription := checkIfFileIsValid(csv, resultsFilename)
+	if errorDescription != "" {
+		jsonResponse(w, http.StatusBadRequest, errorDescription)
+		
+		return
 	}
 
 	// primero va a agregar la imagen en caso de que exista
 	var responseFromImage string
 	if image != nil {
-		responseFromImage, err = s.Database.AddImage(image, imageFilename, "processed")
+		responseFromImage, err = server.Database.AddImage(image, imageFilename, "processed")
 		if err != nil {
 			jsonResponse(w, http.StatusInternalServerError, err.Error())
+			
 			return
 		}
 	}
 
 	// agrega los resultados del procesamiento (esto sí que tiene que hacerse si o si)
-	responseFromResults, err := s.Database.AddImage(results, resultsFilename, "results", &imageProperties)
+	responseFromResults, err := server.Database.AddImage(results, resultsFilename, "results", &imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, err.Error())
+		
 		return
 	}
 
@@ -85,7 +83,7 @@ func (s *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.R
 }
 
 // GetProcessedSatelliteImage
-func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
+func (server *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 
 	queryParams := r.URL.Query()
@@ -97,7 +95,7 @@ func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	bytesRead, err := s.Database.GetImage(filename, "processed")
+	bytesRead, err := server.Database.GetImage(filename, "processed")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, "Error retrieving processed image")
 		return
@@ -105,4 +103,17 @@ func (s *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Reque
 
 	description := fmt.Sprintf(bWritten, bytesRead)
 	jsonResponse(w, http.StatusOK, description)
+}
+
+func checkIfFileIsValid(extension string, filename string) ([]byte, string) {
+	var image []byte
+	var err error
+	if filename != "" && strings.Contains(filename, extension) {
+		image, err = ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, fmt.Sprintf(errorReadingFileData, err)
+		}
+	}
+
+	return image, ""
 }

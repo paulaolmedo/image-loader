@@ -1,6 +1,7 @@
 package test
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -28,12 +29,14 @@ func TestMain(test *testing.M) {
 
 func InitService() {
 	testConfiguration = server.Server{}
-	testConfiguration.InitHTTPServer(mongoURL)
+	if err := testConfiguration.InitHTTPServer(mongoURL); err != nil {
+		log.Fatal(err)
+	}
 	testserver = httptest.NewServer(testConfiguration.Router)
 }
 
-func InitRawImage(Filename string) data.RawSatelliteImage {
-	return data.RawSatelliteImage{Filename: Filename}
+func InitRawImage(filename string) data.RawSatelliteImage {
+	return data.RawSatelliteImage{Filename: filename}
 }
 
 func InitProcessedImage(imageFilename string, resultsFileName string) data.ProcessedSatelliteImage {

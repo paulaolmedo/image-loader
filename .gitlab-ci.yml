@@ -28,7 +28,10 @@ test:
   stage: test
   image: golang:latest
   script:
-    - go test -race $(go list ./... | grep -v /vendor/)
+    - go test -race -v -coverpkg ./... ./test/ -coverprofile=cover.out
+    - go tool cover -html=cover.out -o coverage.html
+  artifacts:
+    paths: coverage.html
 
 code_quality:
   stage: test

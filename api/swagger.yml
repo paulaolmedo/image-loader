@@ -96,6 +96,37 @@ info:
   version: 1.0.0
 paths:
   /images/processed:
+    get:
+      description: '@WIP'
+      operationId: GetProcessedSatelliteImage
+      parameters:
+      - description: processed image identification
+        in: query
+        name: filename
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: processed image details (bytes written to local storage)
+          schema:
+            items:
+              $ref: '#/definitions/ProcessedSatelliteImage'
+            type: array
+        "409":
+          description: I/O conflict while writing to local storage
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/ModelError'
+            type: array
+      summary: Retrieve processed image
     post:
       description: '@WIP'
       operationId: LoadNewProcessedSatelliteImage
@@ -128,13 +159,13 @@ paths:
               $ref: '#/definitions/ModelError'
             type: array
       summary: Load new processed image
-  /images/processed/{filename}:
+  /images/raw:
     get:
       description: '@WIP'
-      operationId: GetProcessedSatelliteImage
+      operationId: GetRawSatelliteImage
       parameters:
-      - description: processed image identification
-        in: path
+      - description: raw image identification
+        in: query
         name: filename
         required: true
         type: string
@@ -142,13 +173,13 @@ paths:
       - application/json
       responses:
         "200":
-          description: processed image details (bytes written to local storage)
+          description: Raw image details (bytes written to local storage)
           schema:
             items:
-              $ref: '#/definitions/ProcessedSatelliteImage'
+              $ref: '#/definitions/RawSatelliteImage'
             type: array
         "409":
-          description: I/O conflict while writting to local storage
+          description: I/O conflict while writing to local storage
           schema:
             items:
               $ref: '#/definitions/ModelError'
@@ -159,8 +190,7 @@ paths:
             items:
               $ref: '#/definitions/ModelError'
             type: array
-      summary: Retrieve processed image
-  /images/raw:
+      summary: Retrieve raw image
     post:
       description: '@WIP'
       operationId: LoadNewRawSatelliteImage
@@ -193,38 +223,6 @@ paths:
               $ref: '#/definitions/ModelError'
             type: array
       summary: Load new raw image
-  /images/raw/{filename}:
-    get:
-      description: '@WIP'
-      operationId: GetRawSatelliteImage
-      parameters:
-      - description: raw image identification
-        in: path
-        name: filename
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Raw image details (bytes written to local storage)
-          schema:
-            items:
-              $ref: '#/definitions/RawSatelliteImage'
-            type: array
-        "409":
-          description: I/O conflict while writting to local storage
-          schema:
-            items:
-              $ref: '#/definitions/ModelError'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            items:
-              $ref: '#/definitions/ModelError'
-            type: array
-      summary: Retrieve raw image
 produces:
 - application/json
 schemes:

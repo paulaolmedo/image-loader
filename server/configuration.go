@@ -22,9 +22,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	mongo "image-loader/internal/mongo"
 
+	"github.com/go-openapi/runtime/middleware"
 	mux "github.com/gorilla/mux"
 	cors "github.com/rs/cors"
 )
@@ -53,13 +55,15 @@ func (server *Server) InitHTTPServer(databasepath string) error {
 		}
 
 		fmt.Printf("routes %s %s \n", methods, template)
-		
+
 		return nil
 	})
 	if err != nil {
 		return fmt.Errorf("error when initializing routes -> %w", err)
 	}
-	
+
+	server.InitOpenAPIRouters()
+
 	return nil
 }
 
@@ -107,9 +111,9 @@ func (server *Server) InitRouters() {
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
-	server.Router.HandleFunc("/images/raw", SetMiddlewareJSON(server.LoadNewRawSatelliteImage)).Methods("POST")
+	server.Router.HandleFunc("/images/raw/", SetMiddlewareJSON(server.LoadNewRawSatelliteImage)).Methods("POST")
 
-	// swagger:operation GET /images/raw/{filename} GetRawSatelliteImage
+	// swagger:operation GET /images/raw GetRawSatelliteImage
 	//
 	// Retrieve raw image
 	//
@@ -119,7 +123,7 @@ func (server *Server) InitRouters() {
 	// produces:
 	// - application/json
 	// parameters:
-	// - in: path
+	// - in: query
 	//   name: filename
 	//   description: raw image identification
 	//   required: true
@@ -182,7 +186,7 @@ func (server *Server) InitRouters() {
 	//         "$ref": "#/definitions/ModelError"
 	server.Router.HandleFunc("/images/processed", SetMiddlewareJSON(server.LoadNewProcessedSatelliteImage)).Methods("POST")
 
-	// swagger:operation GET /images/processed/{filename} GetProcessedSatelliteImage
+	// swagger:operation GET /images/processed GetProcessedSatelliteImage
 	//
 	// Retrieve processed image
 	//
@@ -192,7 +196,7 @@ func (server *Server) InitRouters() {
 	// produces:
 	// - application/json
 	// parameters:
-	// - in: path
+	// - in: query
 	//   name: filename
 	//   description: processed image identification
 	//   required: true
@@ -217,6 +221,24 @@ func (server *Server) InitRouters() {
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	server.Router.HandleFunc("/images/processed", SetMiddlewareJSON(server.GetProcessedSatelliteImage)).Methods("GET")
+}
+
+func (server *Server) InitOpenAPIRouters() {
+	if _, err := os.Stat(swaggerpath); err != nil {
+		fmt.Printf("cannot open swagger file %v \n", err)
+	}
+
+	server.Router.Handle(swaggerpath, http.FileServer(http.Dir("./")))
+
+	if os.Getenv(ENVIRONMENT) == "production" {
+		opts := middleware.RedocOpts{SpecURL: swaggerpath}
+		redoc := middleware.Redoc(opts, nil)
+		server.Router.Handle("/docs", redoc)
+	}
+
+	opts := middleware.SwaggerUIOpts{SpecURL: swaggerpath}
+	swagger := middleware.SwaggerUI(opts, nil)
+	server.Router.Handle("/docs", swagger)
 }
 
 // InitDatabase .

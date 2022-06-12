@@ -24,6 +24,10 @@ const (
 	// SUCCESS MESSAGES
 	bWritten = "Bytes written: %d. "
 	bRead    = "Bytes read: %d. "
+
+	swaggerpath = "/swagger.yml"
+
+	ENVIRONMENT = "ENVIRONMENT"
 )
 
 // jsonResponse builds the endpoints response

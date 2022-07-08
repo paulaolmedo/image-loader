@@ -63,6 +63,7 @@ func (server *Server) InitHTTPServer(databasepath string) error {
 	}
 
 	server.InitOpenAPIRouters()
+	server.Router.Handle("/", http.FileServer(http.Dir("./")))
 
 	return nil
 }
@@ -78,7 +79,7 @@ func (server *Server) Run(host string) {
 func (server *Server) InitRouters() {
 	// swagger:operation POST /images/raw LoadNewRawSatelliteImage
 	//
-	// Load new raw image
+	// Loads new raw image
 	//
 	// @WIP
 	//
@@ -115,7 +116,7 @@ func (server *Server) InitRouters() {
 
 	// swagger:operation GET /images/raw GetRawSatelliteImage
 	//
-	// Retrieve raw image
+	// Retrieves a raw image
 	//
 	// @WIP
 	//
@@ -151,7 +152,7 @@ func (server *Server) InitRouters() {
 
 	// swagger:operation POST /images/processed LoadNewProcessedSatelliteImage
 	//
-	// Load new processed image
+	// Loads a new processed image and it's processing results
 	//
 	// @WIP
 	//
@@ -188,7 +189,7 @@ func (server *Server) InitRouters() {
 
 	// swagger:operation GET /images/processed GetProcessedSatelliteImage
 	//
-	// Retrieve processed image
+	// Retrieves processed image
 	//
 	// @WIP
 	//

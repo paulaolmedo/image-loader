@@ -18,7 +18,7 @@
 
 // Image loader
 //
-// @wip description
+// Service to manage satellite imagery and it's data
 //
 //     Schemes: http
 //     Host: 0.0.0.0:8080
@@ -35,7 +35,6 @@
 package main
 
 import (
-	"fmt"
 	server "image-loader/server"
 	"log"
 	"os"
@@ -51,7 +50,6 @@ func main() {
 
 	host := p.MustGetString("host")
 	databaseHost := p.MustGetString("database_host")
-	fmt.Printf("host %v", databaseHost)
 
 	var configuration server.Server
 

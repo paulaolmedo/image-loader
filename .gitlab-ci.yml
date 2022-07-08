@@ -38,3 +38,34 @@ code_quality:
     CODE_QUALITY_IMAGE: "registry.gitlab.com/gitlab-org/ci-cd/codequality:0.85.5"
   artifacts:
     paths: [gl-code-quality-report.json]
+
+docs:
+  stage: docs
+  script:
+    - dir=$(mktemp -d)  
+    - git clone https://github.com/go-swagger/go-swagger "$dir"
+    - cd "$dir"
+    - go install ./cmd/swagger
+    - cd "$GOPATH/src/$REPO_NAME"
+    - swagger generate spec -m -o swagger.yml
+  artifacts:
+    paths: 
+      - swagger.yml
+
+pages:
+  stage: deploy_docs
+  image: node:latest
+  before_script:
+    - ''
+  script:
+    - cd $CI_PROJECT_DIR
+    - mkdir -p public
+    - npm install -g redoc-cli
+    - ls
+    - redoc-cli build -o public/index.html swagger.yml
+  dependencies:
+    - docs
+  artifacts:
+    paths: 
+      - $CI_PROJECT_DIR/public
+    expire_in: 1 week

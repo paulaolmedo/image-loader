@@ -11,4 +11,5 @@ ENV IMAGE_LOADER /home
 WORKDIR $IMAGE_LOADER
 COPY --from=builder /go/image-loader/image-loader .
 COPY --from=builder /go/image-loader/cmd/app.properties .
-CMD ./image-loader -mongodb mongodb://localhost:27017
+ENV IL_PROPERTIES=app.properties
+ENTRYPOINT ["./image-loader"]

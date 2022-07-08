@@ -1,5 +1,5 @@
 variables:
-  REPO_NAME: gitlab.com/paulaolmedo/image-loader
+  REPO_NAME: gitlab.com/satellite-forecast/image-loader
   MONGO_URI: mongodb://mongo
 
 services:
@@ -44,6 +44,7 @@ code_quality:
 
 docs:
   stage: docs
+  image: golang:latest
   script:
     - dir=$(mktemp -d)  
     - git clone https://github.com/go-swagger/go-swagger "$dir"

@@ -79,9 +79,8 @@ func (server *Server) Run(host string) {
 func (server *Server) InitRouters() {
 	// swagger:operation POST /images/raw LoadNewRawSatelliteImage
 	//
-	// Loads new raw image
+	// Load new raw image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -89,25 +88,25 @@ func (server *Server) InitRouters() {
 	// parameters:
 	// - in: body
 	//   name: raw satellite image
-	//   description: Image information
+	//   description: image information
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/RawSatelliteImage"
 	// responses:
 	//   '200':
-	//     description: Raw image details (bytes written into the database)
+	//     description: raw image details (bytes written into the database)
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/RawSatelliteImage"
 	//   '409':
-	//     description: Raw image already exists
+	//     description: raw image already exists
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
@@ -118,7 +117,6 @@ func (server *Server) InitRouters() {
 	//
 	// Retrieves a raw image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -131,7 +129,7 @@ func (server *Server) InitRouters() {
 	//   type: string
 	// responses:
 	//   '200':
-	//     description: Raw image details (bytes written to local storage)
+	//     description: raw image details (bytes written to local storage)
 	//     schema:
 	//       type: array
 	//       items:
@@ -143,7 +141,7 @@ func (server *Server) InitRouters() {
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
@@ -154,7 +152,6 @@ func (server *Server) InitRouters() {
 	//
 	// Loads a new processed image and it's processing results
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -162,25 +159,25 @@ func (server *Server) InitRouters() {
 	// parameters:
 	// - in: body
 	//   name: processed satellite image
-	//   description: Image information
+	//   description: image information
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/ProcessedSatelliteImage"
 	// responses:
 	//   '200':
-	//     description: Processed image details (bytes written into the database)
+	//     description: processed image details (bytes written into the database)
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ProcessedSatelliteImage"
 	//   '409':
-	//     description: Processed image already exists
+	//     description: processed image already exists
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
@@ -191,7 +188,6 @@ func (server *Server) InitRouters() {
 	//
 	// Retrieves processed image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -216,7 +212,7 @@ func (server *Server) InitRouters() {
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
@@ -231,7 +227,7 @@ func (server *Server) InitOpenAPIRouters() {
 
 	server.Router.Handle(swaggerpath, http.FileServer(http.Dir("./")))
 
-	if os.Getenv(ENVIRONMENT) == "production" {
+	if os.Getenv(ENVIRONMENT) == "dev" {
 		opts := middleware.RedocOpts{SpecURL: swaggerpath}
 		redoc := middleware.Redoc(opts, nil)
 		server.Router.Handle("/docs", redoc)

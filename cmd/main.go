@@ -24,6 +24,8 @@
 //     Host: 0.0.0.0:8080
 //	   BasePath: /
 //     Version: 1.0.0
+//	   License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+//     Contact: Satellite Forecast<info@satelliteforecast.system>
 //
 //     Consumes:
 //     - application/json

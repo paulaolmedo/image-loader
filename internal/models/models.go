@@ -56,7 +56,7 @@ type NormalizedIndexes struct {
 	Ndwi []float64 `json:"ndwi,omitempty"`
 }
 
-//ModelError
+// ModelError
 //
 // @wip
 //

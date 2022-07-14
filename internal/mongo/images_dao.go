@@ -23,9 +23,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	processed_images "image-loader/internal/models"
 	"io/ioutil"
 	"time"
+
+	processed_images "image-loader/internal/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,6 +39,9 @@ const (
 	processedImagesDatabase  = "safo-processed-images"
 	processedResultsDatabase = "safo-processed-results"
 	filesCollection          = "fs.files"
+
+	timeout = 10
+	poolsize = 5
 )
 
 // ImageRepository to manage the db access
@@ -57,7 +61,7 @@ type ImageDao struct {
 func InitiateImageDao(url string) (*ImageDao, error) {
 	opts := options.Client()
 	opts.ApplyURI(url)
-	opts.SetMaxPoolSize(5)
+	opts.SetMaxPoolSize(poolsize)
 
 	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
@@ -89,7 +93,6 @@ func (dao *ImageDao) AddFile(file []byte, filename string, fileType string) (int
 	default:
 		err := errors.New("no such option")
 		return 0, err
-
 	}
 	// error opening database connection
 	if err != nil {
@@ -117,7 +120,7 @@ func (dao *ImageDao) GetRawImage(filename string) (int64, error) {
 	db := dao.mongoClient.Database(rawDatabase)
 	fsFiles := db.Collection(filesCollection)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
 
 	var results bson.M
@@ -147,7 +150,7 @@ func (dao *ImageDao) GetRawImage(filename string) (int64, error) {
 
 // AddProcessedImageData .
 func (dao *ImageDao) AddProcessedImageData(image ...*processed_images.ProcessedSatelliteImage) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
 
 	// esto genera una nueva colección en la base de datos de imgs procesadas
@@ -164,7 +167,7 @@ func (dao *ImageDao) GetProcessedImage(filename string) (int64, error) {
 	db := dao.mongoClient.Database(processedImagesDatabase)
 	fsFiles := db.Collection(filesCollection)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*time.Second)
 	defer cancel()
 
 	var results bson.M

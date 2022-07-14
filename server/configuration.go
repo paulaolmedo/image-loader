@@ -22,9 +22,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	mongo "image-loader/internal/mongo"
 
+	"github.com/go-openapi/runtime/middleware"
 	mux "github.com/gorilla/mux"
 	cors "github.com/rs/cors"
 )
@@ -36,34 +38,49 @@ type Server struct {
 }
 
 // Init configuration
-func (serverConfiguration *Server) InitHTTPServer(databasepath string) {
-	serverConfiguration.InitDatabase(databasepath)
-	serverConfiguration.Router = mux.NewRouter()
-	serverConfiguration.InitRouters()
+func (server *Server) InitHTTPServer(databasepath string) error {
+	server.InitDatabase(databasepath)
+	server.Router = mux.NewRouter()
+	server.InitRouters()
 
-	serverConfiguration.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-		template, _ := route.GetPathTemplate()
-		methods, _ := route.GetMethods()
-		fmt.Printf("routes %s %s", methods, template)
-		fmt.Println()
+	err := server.Router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		template, err := route.GetPathTemplate()
+		if err != nil {
+			return fmt.Errorf("error getting path templates: %w", err)
+		}
+
+		methods, err := route.GetMethods()
+		if err != nil {
+			return fmt.Errorf("error getting methods: %w", err)
+		}
+
+		fmt.Printf("routes %s %s \n", methods, template)
+
 		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("error when initializing routes -> %w", err)
+	}
+
+	server.InitOpenAPIRouters()
+	server.Router.Handle("/", http.FileServer(http.Dir("./")))
+
+	return nil
 }
 
 // Run .
-func (serverConfiguration *Server) Run(host string) {
-	fmt.Println("Listening to:", host)
-	handler := cors.Default().Handler(serverConfiguration.Router)
+func (server *Server) Run(host string) {
+	fmt.Printf("Listening to: %v \n", host)
+	handler := cors.Default().Handler(server.Router)
 	log.Fatal(http.ListenAndServe(host, handler))
 }
 
 // InitRouters .
-func (serverConfiguration *Server) InitRouters() {
+func (server *Server) InitRouters() {
 	// swagger:operation POST /images/raw LoadNewRawSatelliteImage
 	//
 	// Load new raw image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -71,72 +88,70 @@ func (serverConfiguration *Server) InitRouters() {
 	// parameters:
 	// - in: body
 	//   name: raw satellite image
-	//   description: Image information
+	//   description: image information
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/RawSatelliteImage"
 	// responses:
 	//   '200':
-	//     description: Raw image details (bytes written into the database)
+	//     description: raw image details (bytes written into the database)
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/RawSatelliteImage"
 	//   '409':
-	//     description: Raw image already exists
+	//     description: raw image already exists
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
-	serverConfiguration.Router.HandleFunc("/images/raw", SetMiddlewareJSON(serverConfiguration.LoadNewRawSatelliteImage)).Methods("POST")
+	server.Router.HandleFunc("/images/raw/", SetMiddlewareJSON(server.LoadNewRawSatelliteImage)).Methods("POST")
 
-	// swagger:operation GET /images/raw/{filename} GetRawSatelliteImage
+	// swagger:operation GET /images/raw GetRawSatelliteImage
 	//
-	// Retrieve raw image
+	// Retrieves a raw image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
 	// - application/json
 	// parameters:
-	// - in: path
+	// - in: query
 	//   name: filename
 	//   description: raw image identification
 	//   required: true
 	//   type: string
 	// responses:
 	//   '200':
-	//     description: Raw image details (bytes written to local storage)
+	//     description: raw image details (bytes written to local storage)
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/RawSatelliteImage"
 	//   '409':
-	//     description: I/O conflict while writting to local storage
+	//     description: I/O conflict while writing to local storage
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
-	serverConfiguration.Router.HandleFunc("/images/raw", SetMiddlewareJSON(serverConfiguration.GetRawSatelliteImage)).Methods("GET")
+	server.Router.HandleFunc("/images/raw", SetMiddlewareJSON(server.GetRawSatelliteImage)).Methods("GET")
 
 	// swagger:operation POST /images/processed LoadNewProcessedSatelliteImage
 	//
-	// Load new processed image
+	// Loads a new processed image and it's processing results
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
@@ -144,42 +159,41 @@ func (serverConfiguration *Server) InitRouters() {
 	// parameters:
 	// - in: body
 	//   name: processed satellite image
-	//   description: Image information
+	//   description: image information
 	//   required: true
 	//   schema:
 	//     "$ref": "#/definitions/ProcessedSatelliteImage"
 	// responses:
 	//   '200':
-	//     description: Processed image details (bytes written into the database)
+	//     description: processed image details (bytes written into the database)
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ProcessedSatelliteImage"
 	//   '409':
-	//     description: Processed image already exists
+	//     description: processed image already exists
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
-	serverConfiguration.Router.HandleFunc("/images/processed", SetMiddlewareJSON(serverConfiguration.LoadNewProcessedSatelliteImage)).Methods("POST")
+	server.Router.HandleFunc("/images/processed", SetMiddlewareJSON(server.LoadNewProcessedSatelliteImage)).Methods("POST")
 
-	// swagger:operation GET /images/processed/{filename} GetProcessedSatelliteImage
+	// swagger:operation GET /images/processed GetProcessedSatelliteImage
 	//
-	// Retrieve processed image
+	// Retrieves processed image
 	//
-	// @WIP
 	//
 	// ---
 	// produces:
 	// - application/json
 	// parameters:
-	// - in: path
+	// - in: query
 	//   name: filename
 	//   description: processed image identification
 	//   required: true
@@ -192,27 +206,45 @@ func (serverConfiguration *Server) InitRouters() {
 	//       items:
 	//         "$ref": "#/definitions/ProcessedSatelliteImage"
 	//   '409':
-	//     description: I/O conflict while writting to local storage
+	//     description: I/O conflict while writing to local storage
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
 	//   '500':
-	//     description: Internal Server Error
+	//     description: internal server error
 	//     schema:
 	//       type: array
 	//       items:
 	//         "$ref": "#/definitions/ModelError"
-	serverConfiguration.Router.HandleFunc("/images/processed", SetMiddlewareJSON(serverConfiguration.GetProcessedSatelliteImage)).Methods("GET")
+	server.Router.HandleFunc("/images/processed", SetMiddlewareJSON(server.GetProcessedSatelliteImage)).Methods("GET")
+}
+
+func (server *Server) InitOpenAPIRouters() {
+	if _, err := os.Stat(swaggerpath); err != nil {
+		fmt.Printf("cannot open swagger file %v \n", err)
+	}
+
+	server.Router.Handle(swaggerpath, http.FileServer(http.Dir("./")))
+
+	if os.Getenv(ENVIRONMENT) == "dev" {
+		opts := middleware.RedocOpts{SpecURL: swaggerpath}
+		redoc := middleware.Redoc(opts, nil)
+		server.Router.Handle("/docs", redoc)
+	}
+
+	opts := middleware.SwaggerUIOpts{SpecURL: swaggerpath}
+	swagger := middleware.SwaggerUI(opts, nil)
+	server.Router.Handle("/docs", swagger)
 }
 
 // InitDatabase .
-func (serverConfiguration *Server) InitDatabase(databasepath string) {
+func (server *Server) InitDatabase(databasepath string) {
 	imageDao, err := mongo.InitiateImageDao(databasepath)
 	if err != nil {
 		log.Fatalf(connectionError, err)
 	}
-	serverConfiguration.Database = mongo.NewImageService(imageDao)
+	server.Database = mongo.NewImageService(imageDao)
 }
 
 // SetMiddlewareJSON .

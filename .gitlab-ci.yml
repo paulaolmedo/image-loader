@@ -1,5 +1,5 @@
 variables:
-  REPO_NAME: gitlab.com/paulaolmedo/image-loader
+  REPO_NAME: gitlab.com/satellite-forecast/image-loader
   MONGO_URI: mongodb://mongo
 
 services:
@@ -13,6 +13,8 @@ before_script:
 stages:
   - lint
   - test
+  - docs
+  - deploy_docs
 
 include:
   - template: Code-Quality.gitlab-ci.yml
@@ -23,14 +25,51 @@ linting:
   script:
     - go fmt $(go list ./... | grep -v /vendor/)
     - go vet $(go list ./... | grep -v /vendor/)
+  when: manual
 
 test:
   stage: test
   image: golang:latest
   script:
-    - go test -race $(go list ./... | grep -v /vendor/)
+    - go test -race -v -coverpkg ./... ./test/ -coverprofile=cover.out
+    - go tool cover -html=cover.out -o coverage.html
+  artifacts:
+    paths: [coverage.html]
+  when: manual
 
 code_quality:
-  stage: test
+  when: manual
   artifacts:
     paths: [gl-code-quality-report.json]
+
+docs:
+  stage: docs
+  image: golang:latest
+  script:
+    - dir=$(mktemp -d)  
+    - git clone https://github.com/go-swagger/go-swagger "$dir"
+    - cd "$dir"
+    - go install ./cmd/swagger
+    - cd "$GOPATH/src/$REPO_NAME"
+    - swagger generate spec -m -o swagger.yml
+  artifacts:
+    paths: 
+      - swagger.yml
+
+pages:
+  stage: deploy_docs
+  image: node:latest
+  before_script:
+    - ''
+  script:
+    - cd $CI_PROJECT_DIR
+    - mkdir -p public
+    - npm install -g redoc-cli
+    - ls
+    - redoc-cli build -o public/index.html swagger.yml
+  dependencies:
+    - docs
+  artifacts:
+    paths: 
+      - $CI_PROJECT_DIR/public
+    expire_in: 1 week

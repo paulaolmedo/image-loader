@@ -18,12 +18,14 @@
 
 // Image loader
 //
-// @wip description
+// Service to manage satellite imagery and it's data
 //
 //     Schemes: http
 //     Host: 0.0.0.0:8080
 //	   BasePath: /
 //     Version: 1.0.0
+//	   License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+//     Contact: Satellite Forecast<info@satelliteforecast.system>
 //
 //     Consumes:
 //     - application/json
@@ -36,6 +38,8 @@ package main
 
 import (
 	server "image-loader/server"
+	"log"
+	"os"
 
 	"github.com/magiconair/properties"
 )
@@ -43,12 +47,20 @@ import (
 //go:generate swagger generate spec -m -o ../docs/swagger.yml
 
 func main() {
-	p := properties.MustLoadFile("app.properties", properties.UTF8)
+	propertiesPath := os.Getenv("IL_PROPERTIES")
+	p := properties.MustLoadFile(propertiesPath, properties.UTF8)
 
 	host := p.MustGetString("host")
 	databaseHost := p.MustGetString("database_host")
 
-	configuration := server.Server{}
-	configuration.InitHTTPServer(databaseHost)
+	var configuration server.Server
+
+	environment := p.MustGetString("environment")
+	os.Setenv(server.ENVIRONMENT, environment)
+
+	if err := configuration.InitHTTPServer(databaseHost); err != nil {
+		log.Fatal(err)
+	}
+
 	configuration.Run(host)
 }

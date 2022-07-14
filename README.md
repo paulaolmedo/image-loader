@@ -1,9 +1,8 @@
 # Image loader 🛰️
 
-```
 ## how it works
-
 ### with 🐳
+
 Build the docker image:
  ```
  docker build -f ci/Dockerfile -t paulabeatrizolmedo/image-loader .
@@ -16,7 +15,7 @@ Build the docker image:
 
 
 ### without docker ⚒️
-Then, to build the application run:
+To build the application run:
  ```
  go build -o image-loader image-loader/cmd/image-loader-api
  ```

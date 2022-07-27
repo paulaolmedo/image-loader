@@ -24,3 +24,6 @@ And finally:
 ```
 ./image-loader -mongodb mongodb://localhost:27017
 ```
+
+## API documentation
+- [Gitlab pages](https://satellite-forecast.gitlab.io/image-loader/)

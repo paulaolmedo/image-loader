@@ -227,7 +227,7 @@ func (server *Server) InitOpenAPIRouters() {
 
 	server.Router.Handle(swaggerpath, http.FileServer(http.Dir("./")))
 
-	if os.Getenv(ENVIRONMENT) == "dev" {
+	if os.Getenv(ENVIRONMENT) == "production" {
 		opts := middleware.RedocOpts{SpecURL: swaggerpath}
 		redoc := middleware.Redoc(opts, nil)
 		server.Router.Handle("/docs", redoc)

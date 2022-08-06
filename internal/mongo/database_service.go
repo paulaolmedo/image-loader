@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	processed_images "image-loader/internal/models"
+	"path/filepath"
 )
 
 const (
@@ -46,10 +47,13 @@ func NewImageService(imageRepository ImageRepository) DatabaseService {
 	return &dbProperties{imageRepository}
 }
 
-func (properties *dbProperties) AddImage(image []byte, imageFilename string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
+// esta o la anterior tendría que limpiar el nombre del archivo para que me quede solo la "base" y después poder guardarla donde sea
+func (properties *dbProperties) AddImage(image []byte, path string, operation string, imageProperties ...*processed_images.ProcessedSatelliteImage) (string, error) {
+	imageFilename :=filepath.Base(path)
+	
 	size, err := properties.imageRepository.AddFile(image, imageFilename, operation)
 	if err != nil {
-		return "", fmt.Errorf(errorStoringImage, err)
+		return "", fmt.Errorf(errorStoringImage, err.Error())
 	}
 
 	response := "Bytes written while storing %v image: %v. "
@@ -57,7 +61,7 @@ func (properties *dbProperties) AddImage(image []byte, imageFilename string, ope
 	if operation == "results" {
 		result, err := properties.imageRepository.AddProcessedImageData(imageProperties...)
 		if err != nil {
-			return "", fmt.Errorf(errorStoringDataImage, err)
+			return "", fmt.Errorf(errorStoringDataImage, err.Error())
 		}
 
 		response += "Id of the stored results: " + result
@@ -82,7 +86,7 @@ func (properties *dbProperties) GetImage(filename string, imageType string) (int
 	}
 
 	if err != nil {
-		return 0, fmt.Errorf(errorRetrievingImage, err)
+		return 0, fmt.Errorf(errorRetrievingImage, err.Error())
 	}
 
 	return size, nil

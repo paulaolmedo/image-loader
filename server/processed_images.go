@@ -29,6 +29,7 @@ import (
 
 // LoadNewProcessedSatelliteImage stores a new processed image
 // TODO al iguala que las imágenes no procesadas, controlar el contenido de lo que se está guardando
+// Carga tanto las imágenes procesadas como los resultados de procesamiento
 func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 
@@ -37,17 +38,16 @@ func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *h
 	err := json.NewDecoder(r.Body).Decode(&imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusBadRequest, errorReadingJSON)
-		
 		return
 	}
 
 	imageFilename := imageProperties.ImageFilename
 	resultsFilename := imageProperties.ResultsFilename
 
-	image, errorDescription := checkIfFileIsValid(tif, imageFilename)
+	// TODO Mejorar estas validaciones algún día
+	image, errorDescription := checkIfFileIsValid("png", imageFilename)
 	if errorDescription != "" {
 		jsonResponse(w, http.StatusBadRequest, errorDescription)
-		
 		return
 	}
 
@@ -55,7 +55,6 @@ func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *h
 	results, errorDescription := checkIfFileIsValid(csv, resultsFilename)
 	if errorDescription != "" {
 		jsonResponse(w, http.StatusBadRequest, errorDescription)
-		
 		return
 	}
 
@@ -65,7 +64,6 @@ func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *h
 		responseFromImage, err = server.Database.AddImage(image, imageFilename, "processed")
 		if err != nil {
 			jsonResponse(w, http.StatusInternalServerError, err.Error())
-			
 			return
 		}
 	}
@@ -74,7 +72,6 @@ func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *h
 	responseFromResults, err := server.Database.AddImage(results, resultsFilename, "results", &imageProperties)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, err.Error())
-		
 		return
 	}
 
@@ -82,27 +79,26 @@ func (server *Server) LoadNewProcessedSatelliteImage(w http.ResponseWriter, r *h
 	jsonResponse(w, http.StatusCreated, response)
 }
 
-// GetProcessedSatelliteImage
+// GetProcessedSatelliteImage devuelve la imagen .png + los resultados de procesamiento, para pasárselos al otro servicio
 func (server *Server) GetProcessedSatelliteImage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set(contentType, appJSON)
+	w.Header().Set(contentType, "image/png")
 
 	queryParams := r.URL.Query()
 	filename := queryParams.Get("filename")
 
 	// TODO agregar algún otro tipo de validación para asegurarse que es un archivo "bueno"
-	if !strings.Contains(filename, csv) {
+	if !strings.Contains(filename, ".png") {
 		jsonResponse(w, http.StatusConflict, errorReadingFilename)
 		return
 	}
 
-	bytesRead, err := server.Database.GetImage(filename, "processed")
+	_, err := server.Database.GetImage(filename, "processed")
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, "Error retrieving processed image")
+		jsonResponse(w, http.StatusInternalServerError, err)
 		return
 	}
-
-	description := fmt.Sprintf(bWritten, bytesRead)
-	jsonResponse(w, http.StatusOK, description)
+ 
+	http.ServeFile(w, r, filename)
 }
 
 func checkIfFileIsValid(extension string, filename string) ([]byte, string) {

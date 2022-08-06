@@ -27,6 +27,7 @@ import (
 	"strings"
 )
 
+// LoadNewRawSatelliteImage carga las imágenes crudas en la base de datos. Localmente carga los tifs. En la nube, carga .pngs
 func (server *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 	var imageProperties data.RawSatelliteImage
@@ -60,7 +61,7 @@ func (server *Server) LoadNewRawSatelliteImage(w http.ResponseWriter, r *http.Re
 	jsonResponse(w, http.StatusCreated, response)
 }
 
-// Esto lo tendría que pasar por query params y no por el body
+// GetRawSatelliteImage devuelve las imágenes crudas, sin procesar. PD: para ahorrar espacio en Atlas, se configura para que las imágenes crudas sean en .png y no en tif.
 func (server *Server) GetRawSatelliteImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(contentType, appJSON)
 

@@ -40,7 +40,7 @@ const (
 	processedResultsDatabase = "safo-processed-results"
 	filesCollection          = "fs.files"
 
-	timeout = 10
+	timeout  = 10
 	poolsize = 5
 )
 

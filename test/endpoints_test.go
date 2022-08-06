@@ -15,7 +15,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const mongoURL = "mongodb://mongo"
+// const mongoURL = "mongodb://localhost:27017"
+const mongoURL = "mongodb+srv://safo:iZD9VBSBnc8aX2h@safo.o7ykkwy.mongodb.net/?retryWrites=true&w=majority"
 
 var (
 	testserver        *httptest.Server
